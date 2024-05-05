@@ -1,13 +1,21 @@
 #pragma once
-#include "Model.h"
-#include "WorldTransform.h"
 #include "Input.h"
+#include "Model.h"
+#include "PlayerBullet.h"
+#include "WorldTransform.h"
+#include "MT3.h"
+#include <list>
 
 /// <summary>
 /// 自キャラ
 /// </summary>
 class Player {
 public:
+	/// <summary>
+	/// デストラクタ
+	/// </summary>
+	~Player();
+
 	/// <summary>
 	/// 初期化
 	/// </summary>
@@ -26,6 +34,16 @@ public:
 	/// <param name="viewProjection">ビュープロジェクション(参照渡し)</param>
 	void Draw(ViewProjection& viewProjection);
 
+	/// <summary>
+	/// 旋回
+	/// </summary>
+	void Rotate();
+
+	/// <summary>
+	/// 攻撃
+	/// </summary>
+	void Attack();
+
 private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;
@@ -33,6 +51,12 @@ private:
 	Model* model_ = nullptr;
 	// テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
-	//キーボード入力
+	// キーボード入力
 	Input* input_ = nullptr;
+	// ImGuiで値を入力する変数
+	float inputFloat3[3];
+	// 弾
+	PlayerBullet* bullet_ = nullptr;
+	//複数弾
+	std::list<PlayerBullet*> bullets_;
 };

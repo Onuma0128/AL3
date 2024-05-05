@@ -1,5 +1,5 @@
 #pragma once
-
+#include "MT3.h"
 #include "Matrix4x4.h"
 #include "Vector3.h"
 #include <d3d12.h>
@@ -51,6 +51,10 @@ public:
 	/// </summary>
 	/// <returns>定数バッファ</returns>
 	const Microsoft::WRL::ComPtr<ID3D12Resource>& GetConstBuffer() const { return constBuffer_; }
+	/// <summary>
+	/// 行列を計算・転送する
+	/// </summary>
+	void UpdateMatrix();
 
 private:
 	// 定数バッファ
