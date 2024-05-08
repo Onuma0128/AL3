@@ -6,6 +6,7 @@
 #include "Input.h"
 #include "Model.h"
 #include "Player.h"
+#include "Enemy.h"
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
@@ -53,6 +54,8 @@ private: // メンバ変数
 	ViewProjection viewProjection_;
 	// 自キャラ
 	Player* player_ = nullptr;
+	//敵
+	Enemy* enemy_ = nullptr;
 	// デバッグカメラ有効
 	bool isDebugCameraActive_ = false;
 	// デバッグカメラ
