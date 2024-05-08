@@ -60,6 +60,7 @@ Matrix4x4 MakeAfineMatrix(const Vector3& scale, const Vector3& rotate, const Vec
 
 	return result;
 }
+
 Matrix4x4 MakeRotateXMatrix(float radian) {
 	Matrix4x4 result{1, 0, 0, 0, 0, std::cos(radian), std::sin(radian), 0, 0, std::sin(-radian), std::cos(radian), 0, 0, 0, 0, 1};
 	return result;
