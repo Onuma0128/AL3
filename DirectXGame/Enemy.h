@@ -12,6 +12,11 @@
 class Enemy {
 public:
 	/// <summary>
+	/// デストラクタ
+	/// </summary>
+	~Enemy();
+
+	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="model">モデル</param>
@@ -34,6 +39,9 @@ public:
 	/// </summary>
 	/// <param name="viewProjection">ビュープロジェクション(参照渡し)</param>
 	void Draw(ViewProjection& viewProjection);
+
+public:
+	static const int kFireInterval = 60;
 private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;
@@ -41,13 +49,17 @@ private:
 	Model* model_ = nullptr;
 	// テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
-	//行動フェーズ
+	// 行動フェーズ
 	enum class Phase {
 		Approach, // 接近する
 		Leave,    // 離脱する
 	};
-	//フェーズ
+	// フェーズ
 	Phase phase_ = Phase::Approach;
-	//敵の弾
+	// 敵の弾
 	EnemyBullet* bullet_ = nullptr;
+	// 複数弾
+	std::list<EnemyBullet*> bullets_;
+	// 発射タイマー
+	int32_t Timer_ = 0;
 };

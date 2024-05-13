@@ -11,6 +11,7 @@ public:
 
 	/// 更新
 	void Update();
+	bool IsDead() const { return isDead_; }
 
 	/// 描画
 	void Draw(const ViewProjection& viewProjection);
@@ -24,4 +25,6 @@ private:
 	uint32_t textureHandle_ = 0u;
 	// 弾の速度
 	Vector3 velocity_;
+	// デスフラグ
+	bool isDead_ = false;
 };

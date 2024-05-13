@@ -2,6 +2,12 @@
 #include "MT3.h"
 #include <cassert>
 
+Enemy::~Enemy() { 
+	for (EnemyBullet* bullet : bullets_) {
+		delete bullet;
+	}
+}
+
 void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 	// NULLポインタチェック
 	assert(model);
@@ -10,11 +16,18 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 	worldTransform_.Initialize();
 	worldTransform_.translation_.x = 4.0f;
 	worldTransform_.translation_.y = 2.0f;
-	worldTransform_.translation_.z = 10.0f;
-	Fire();
+	worldTransform_.translation_.z = 50.0f;
 }
 
 void Enemy::Update() {
+	// デスフラグの立った弾を削除
+	bullets_.remove_if([](EnemyBullet* bullet) {
+		if (bullet->IsDead()) {
+			delete bullet;
+			return true;
+		}
+		return false;
+	});
 	// 敵の移動ベクトル
 	Vector3 move_ = {0, 0, -0.1f};
 	//移動処理
@@ -29,12 +42,17 @@ void Enemy::Update() {
 	}
 	// 行列を定数バッファに転送
 	worldTransform_.UpdateMatrix();
-	if (bullet_) {
-		bullet_->Update();
+	for (EnemyBullet* bullet : bullets_){
+		bullet->Update();
 	}
 }
 
 void Enemy::Phase_Approach(Vector3& move) {
+	Timer_--;
+	if (Timer_ < 0) {
+		Fire();
+		Timer_ = kFireInterval;
+	}
 	// 移動(ベクトルを加算)
 	worldTransform_.translation_ = Add(worldTransform_.translation_, move);
 	//// スケーリング行列の作成
@@ -60,13 +78,13 @@ void Enemy::Fire() {
 	EnemyBullet* newBullet = new EnemyBullet();
 	newBullet->Initalize(model_,worldTransform_.translation_,velocity);
 
-	bullet_ = newBullet;
+	bullets_.push_back(newBullet);
 }
 
 void Enemy::Draw(ViewProjection& viewProjection) {
 	// 3Dモデルを描画
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
-	if (bullet_) {
-		bullet_->Draw(viewProjection);
+	for (EnemyBullet* bullet : bullets_){
+		bullet->Draw(viewProjection);
 	}
 }
