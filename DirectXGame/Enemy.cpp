@@ -39,7 +39,7 @@ void Enemy::Update() {
 		return false;
 	});
 	// 敵の移動ベクトル
-	Vector3 move_ = {0, 0, -0.1f};
+	Vector3 move_ = {0, 0, -0.01f};
 	//移動処理
 	switch (phase_) { 
 	case Phase::Approach:
