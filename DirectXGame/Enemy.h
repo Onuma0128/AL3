@@ -5,6 +5,9 @@
 #include <list>
 #include "EnemyBullet.h"
 
+// 自機クラスの前方宣言
+class Player;
+
 /// <summary>
 /// 敵
 /// </summary>
@@ -22,6 +25,9 @@ public:
 	/// <param name="model">モデル</param>
 	/// <param name="textureHandle">テクスチャハンドル</param>
 	void Initialize(Model* model, uint32_t textureHandle);
+	void SetPlayer(Player* player) { player_ = player; }
+	// ワールド座標を取得
+	Vector3 GetWorldPosition();
 
 	/// <summary>
 	/// 更新
@@ -62,4 +68,6 @@ private:
 	std::list<EnemyBullet*> bullets_;
 	// 発射タイマー
 	int32_t Timer_ = 0;
+	//自キャラ
+	Player* player_ = nullptr;
 };

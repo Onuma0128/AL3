@@ -1,4 +1,5 @@
 #include "Enemy.h"
+#include "Player.h"
 #include "MT3.h"
 #include <cassert>
 
@@ -17,6 +18,15 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 	worldTransform_.translation_.x = 4.0f;
 	worldTransform_.translation_.y = 2.0f;
 	worldTransform_.translation_.z = 50.0f;
+}
+
+Vector3 Enemy::GetWorldPosition() {
+	// ワールド座標を入れる変数
+	Vector3 worldPos;
+	// ワールド行列の平行成分を取得
+	worldPos = worldTransform_.translation_;
+
+	return worldPos;
 }
 
 void Enemy::Update() {
@@ -72,8 +82,13 @@ void Enemy::Phase_Leave(Vector3& move) {
 
 void Enemy::Fire() {
 	// 弾の速度
-	const float kBulletSpeed = -0.3f;
-	Vector3 velocity(0, 0, kBulletSpeed);
+	const float kBulletSpeed = 0.5f;
+
+	Vector3 worldPlayerPos = player_->GetWorldPosition();
+	Vector3 worldEnemyPos = GetWorldPosition();
+	Vector3 Vector = Subtract(worldPlayerPos, worldEnemyPos);
+	Vector3 normaLizeVector = Normalize(Vector);
+	Vector3 velocity = Multiply(kBulletSpeed, normaLizeVector);
 
 	EnemyBullet* newBullet = new EnemyBullet();
 	newBullet->Initalize(model_,worldTransform_.translation_,velocity);

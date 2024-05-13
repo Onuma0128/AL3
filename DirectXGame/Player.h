@@ -22,6 +22,8 @@ public:
 	/// <param name="model">モデル</param>
 	/// <param name="textureHandle">テクスチャハンドル</param>
 	void Initialize(Model* model, uint32_t textureHandle);
+	// ワールド座標を取得
+	Vector3 GetWorldPosition();
 
 	/// <summary>
 	/// 更新

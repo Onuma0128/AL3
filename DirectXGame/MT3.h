@@ -5,6 +5,14 @@
 
 // 加算
 Vector3 Add(const Vector3& v1, const Vector3& v2);
+// 減算
+Vector3 Subtract(const Vector3& v1, const Vector3& v2);
+// スカラー倍
+Vector3 Multiply(float scalar, const Vector3& v);
+// 長さ
+float Length(const Vector3& v);
+// 正規化
+Vector3 Normalize(const Vector3& v);
 // 1.x軸の回転行列
 Matrix4x4 MakeRotateXMatrix(float radian);
 // 2.y軸の回転行列

@@ -8,6 +8,40 @@ Vector3 Add(const Vector3& v1, const Vector3& v2) {
 	return result;
 }
 
+Vector3 Subtract(const Vector3& v1, const Vector3& v2) { 
+	Vector3 result{};
+	result.x = v1.x - v2.x;
+	result.y = v1.y - v2.y;
+	result.z = v1.z - v2.z;
+	return result;
+}
+
+Vector3 Multiply(float scalar, const Vector3& v) {
+	Vector3 result{};
+	result.x = v.x * scalar;
+	result.y = v.y * scalar;
+	result.z = v.z * scalar;
+	return result;
+}
+
+float Length(const Vector3& v) {
+	float result{};
+	result = sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
+	return result;
+}
+
+Vector3 Normalize(const Vector3& v) {
+	Vector3 result{};
+	float Length{};
+	Length = sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
+	if (Length != 0.0f) {
+		result.x = v.x / Length;
+		result.y = v.y / Length;
+		result.z = v.z / Length;
+	}
+	return result;
+}
+
 Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2) {
 	Matrix4x4 result{};
 	result.m[0][0] = m1.m[0][0] * m2.m[0][0] + m1.m[0][1] * m2.m[1][0] + m1.m[0][2] * m2.m[2][0] + m1.m[0][3] * m2.m[3][0];
