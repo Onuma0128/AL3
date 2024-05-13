@@ -29,6 +29,10 @@ public:
 	/// 更新
 	/// </summary>
 	void Update();
+	//衝突を検出したら呼び出しされるコールバック関数
+	void onCollision();
+	// 弾リストを取得
+	const std::list<PlayerBullet*>& GetBullet() const { return bullets_; }
 
 	/// <summary>
 	/// 描画

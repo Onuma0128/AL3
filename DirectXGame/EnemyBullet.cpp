@@ -15,10 +15,22 @@ void EnemyBullet::Initalize(Model* model, const Vector3& position, const Vector3
 	velocity_ = velocity;
 }
 
-void EnemyBullet::Update() {
-	worldTransform_.UpdateMatrix();
-	worldTransform_.translation_ = Add(velocity_, worldTransform_.translation_);
+Vector3 EnemyBullet::GetWorldPosition() { 
+	// ワールド座標を入れる変数
+	Vector3 worldPos;
+	// ワールド行列の平行成分を取得
+	worldPos = worldTransform_.translation_;
+
+	return worldPos;
 }
+
+void EnemyBullet::Update() {
+	worldTransform_.translation_ = Add(velocity_, worldTransform_.translation_);
+	worldTransform_.matWorld_ = MakeAfineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
+	worldTransform_.UpdateMatrix();
+}
+
+void EnemyBullet::onCollision() { isDead_ = true; }
 
 void EnemyBullet::Draw(const ViewProjection& viewProjection) { 
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);

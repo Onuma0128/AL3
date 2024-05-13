@@ -24,5 +24,8 @@ Matrix4x4 MakeRotateZMatrix(float radian);
 Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2);
 //ベクトル変換
 Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
-    // 3次元アフィン変換
+// 3次元アフィン変換
 Matrix4x4 MakeAfineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
+
+//円の衝突判定
+bool circleCollision(Vector3 v1, Vector3 v2, float radiusV1, float radiusV2);

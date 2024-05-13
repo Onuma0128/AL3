@@ -12,9 +12,13 @@ class PlayerBullet {
 public:
 	/// 初期化
 	void Initalize(Model* model, const Vector3& position, const Vector3& velocity);
+	// ワールド座標を取得
+	Vector3 GetWorldPosition();
 
 	/// 更新
 	void Update();
+	// 衝突を検出したら呼び出しされるコールバック関数
+	void onCollision();
 	bool IsDead() const { return isDead_; }
 
 	/// 描画

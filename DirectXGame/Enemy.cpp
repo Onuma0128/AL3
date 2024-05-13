@@ -15,7 +15,7 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 	model_ = model;
 	textureHandle_ = textureHandle;
 	worldTransform_.Initialize();
-	worldTransform_.translation_.x = 4.0f;
+	worldTransform_.translation_.x = 10.0f;
 	worldTransform_.translation_.y = 2.0f;
 	worldTransform_.translation_.z = 50.0f;
 }
@@ -79,6 +79,8 @@ void Enemy::Phase_Leave(Vector3& move) {
 	move.y = 0.1f;
 	worldTransform_.translation_ = Add(worldTransform_.translation_, move);
 }
+
+void Enemy::onCollision() {}
 
 void Enemy::Fire() {
 	// 弾の速度

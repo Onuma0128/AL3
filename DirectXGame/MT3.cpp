@@ -95,6 +95,15 @@ Matrix4x4 MakeAfineMatrix(const Vector3& scale, const Vector3& rotate, const Vec
 	return result;
 }
 
+bool circleCollision(Vector3 v1, Vector3 v2, float radiusV1, float radiusV2) { 
+	if ((v2.x - v1.x) * (v2.x - v1.x) + (v2.y - v1.y) * (v2.y - v1.y) + (v2.z - v1.z) * (v2.z - v1.z) <= 
+		(radiusV1 + radiusV2) * (radiusV1 + radiusV2)) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 Matrix4x4 MakeRotateXMatrix(float radian) {
 	Matrix4x4 result{1, 0, 0, 0, 0, std::cos(radian), std::sin(radian), 0, 0, std::sin(-radian), std::cos(radian), 0, 0, 0, 0, 1};
 	return result;

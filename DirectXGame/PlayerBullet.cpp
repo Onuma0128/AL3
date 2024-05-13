@@ -14,6 +14,15 @@ void PlayerBullet::Initalize(Model* model, const Vector3& position, const Vector
 	velocity_ = velocity;
 }
 
+Vector3 PlayerBullet::GetWorldPosition() {
+	// ワールド座標を入れる変数
+	Vector3 worldPos;
+	// ワールド行列の平行成分を取得
+	worldPos = worldTransform_.translation_;
+
+	return worldPos;
+}
+
 void PlayerBullet::Update() {
 	worldTransform_.UpdateMatrix();
 	worldTransform_.translation_ = Add(velocity_, worldTransform_.translation_);
@@ -22,5 +31,7 @@ void PlayerBullet::Update() {
 		isDead_ = true;
 	}
 }
+
+void PlayerBullet::onCollision() { isDead_ = true; }
 
 void PlayerBullet::Draw(const ViewProjection& viewProjection) { model_->Draw(worldTransform_, viewProjection, textureHandle_); }
