@@ -21,9 +21,13 @@ public:
 	/// </summary>
 	/// <param name="model">モデル</param>
 	/// <param name="textureHandle">テクスチャハンドル</param>
-	void Initialize(Model* model, uint32_t textureHandle);
+	void Initialize(Model* model, uint32_t textureHandle,Vector3 playerPos);
 	// ワールド座標を取得
 	Vector3 GetWorldPosition();
+	/// <summary>
+	/// 親となるワールドトランスフォームをセット
+	/// </summary>
+	void SetParent(const WorldTransform* parent);
 
 	/// <summary>
 	/// 更新

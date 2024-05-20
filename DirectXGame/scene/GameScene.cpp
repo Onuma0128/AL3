@@ -24,11 +24,10 @@ void GameScene::Initialize() {
 	// 3Dモデルデータの生成
 	model_ = Model::Create();
 	// ビュープロジェクションの初期化
+	viewProjection_.farZ = 650;
 	viewProjection_.Initialize();
 	// 自キャラの生成
 	player_ = new Player();
-	// 自キャラの初期化
-	player_->Initialize(model_, textureHandle_);
 	//敵の生成
 	enemy_ = new Enemy();
 	//敵の初期化
@@ -47,15 +46,17 @@ void GameScene::Initialize() {
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 	//天球の初期化
 	skydome_->Initialize(modelSkydome_);
+	//レールカメラの生成
+	railCamera_ = new RailCamera(); 
+	railCamera_->Initialize();
+	// 自キャラとレールカメラの親子関係を結ぶ
+	player_->SetParent(&railCamera_->GetWorldTransform());
+	// 自キャラの初期化
+	Vector3 playerPosition(0, 0, 50);
+	player_->Initialize(model_, textureHandle_, playerPosition);
 }
 
 void GameScene::Update() {
-	//天球の更新
-	skydome_->Update();
-	// 自キャラの更新
-	player_->Update();
-	// 敵キャラの更新
-	enemy_->Update();
 #ifdef _DEBUG
 	if (input_->TriggerKey(DIK_SPACE)) {
 		isDebugCameraActive_ = true;
@@ -72,6 +73,18 @@ void GameScene::Update() {
 		viewProjection_.UpdateMatrix();
 	}
 	CheckAllCollisions();
+	//レールカメラ
+	railCamera_->Update();
+	viewProjection_.matView = railCamera_->GetViewProjection().matView;
+	viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
+	viewProjection_.TransferMatrix();
+
+	// 天球の更新
+	skydome_->Update();
+	// 自キャラの更新
+	player_->Update();
+	// 敵キャラの更新
+	enemy_->Update();
 }
 
 void GameScene::CheckAllCollisions() {

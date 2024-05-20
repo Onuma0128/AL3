@@ -8,11 +8,12 @@ Player::~Player() {
 	}
 }
 
-void Player::Initialize(Model* model, uint32_t textureHandle) {
+void Player::Initialize(Model* model, uint32_t textureHandle, Vector3 playerPos) {
 	// NULLポインタチェック
 	assert(model);
 	model_ = model;
 	textureHandle_ = textureHandle;
+	worldTransform_.translation_ = playerPos;
 	worldTransform_.Initialize();
 	// シングルトンインスタンスを取得する
 	input_ = Input::GetInstance();
@@ -20,11 +21,13 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 
 Vector3 Player::GetWorldPosition() { 
 	//ワールド座標を入れる変数
-	Vector3 worldPos;
 	//ワールド行列の平行成分を取得
-	worldPos = worldTransform_.translation_;
+	return Transform(Vector3{0, 0, 0}, worldTransform_.matWorld_);
+}
 
-	return worldPos;
+void Player::SetParent(const WorldTransform* parent) {
+	//親子関係を結ぶ
+	worldTransform_.parent_ = parent;
 }
 
 void Player::Update() {
@@ -74,7 +77,7 @@ void Player::Update() {
 	inputFloat3[1] = worldTransform_.translation_.y;
 	inputFloat3[2] = worldTransform_.translation_.z;
 	ImGui::InputFloat3("InputFloat3", inputFloat3);
-	ImGui::SliderFloat3("SliderFloat3", inputFloat3, -20.0f, 20.0f);
+	ImGui::SliderFloat3("SliderFloat3", inputFloat3, -50.0f, 50.0f);
 	worldTransform_.translation_.x = inputFloat3[0];
 	worldTransform_.translation_.y = inputFloat3[1];
 	worldTransform_.translation_.z = inputFloat3[2];
@@ -125,6 +128,7 @@ void Player::Attack() {
 
 		// 弾を生成し、初期化
 		PlayerBullet* newBullet = new PlayerBullet();
+		newBullet->SetParent(worldTransform_.parent_);
 		newBullet->Initalize(model_, worldTransform_.translation_,velocity);
 
 		// 弾を登録する

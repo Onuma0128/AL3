@@ -9,6 +9,7 @@
 #include "Enemy.h"
 #include "Skydome.h"
 #include "Sprite.h"
+#include "RailCamera.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 
@@ -69,7 +70,8 @@ private: // メンバ変数
 	Skydome* skydome_ = nullptr;
 	// 3Dモデル
 	Model* modelSkydome_ = nullptr;
-
+	//レールカメラ
+	RailCamera* railCamera_ = nullptr;
 
 	/// <summary>
 	/// ゲームシーン用

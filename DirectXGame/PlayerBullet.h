@@ -14,6 +14,7 @@ public:
 	void Initalize(Model* model, const Vector3& position, const Vector3& velocity);
 	// ワールド座標を取得
 	Vector3 GetWorldPosition();
+	void SetParent(const WorldTransform* parent);
 
 	/// 更新
 	void Update();

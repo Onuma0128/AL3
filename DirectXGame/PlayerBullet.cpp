@@ -16,11 +16,15 @@ void PlayerBullet::Initalize(Model* model, const Vector3& position, const Vector
 
 Vector3 PlayerBullet::GetWorldPosition() {
 	// ワールド座標を入れる変数
-	Vector3 worldPos;
+	//Vector3 worldPos;
 	// ワールド行列の平行成分を取得
-	worldPos = worldTransform_.translation_;
+	//worldPos = worldTransform_.translation_;
 
-	return worldPos;
+	return Transform(Vector3{0, 0, 0}, worldTransform_.matWorld_);
+}
+
+void PlayerBullet::SetParent(const WorldTransform* parent) { 
+	worldTransform_.parent_ = parent; 
 }
 
 void PlayerBullet::Update() {

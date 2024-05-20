@@ -13,6 +13,8 @@ Vector3 Multiply(float scalar, const Vector3& v);
 float Length(const Vector3& v);
 // 正規化
 Vector3 Normalize(const Vector3& v);
+// 座標変換
+Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix);
 // 1.x軸の回転行列
 Matrix4x4 MakeRotateXMatrix(float radian);
 // 2.y軸の回転行列
@@ -22,6 +24,8 @@ Matrix4x4 MakeRotateZMatrix(float radian);
 
 // 行列の積
 Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2);
+// 逆行列
+Matrix4x4 Inverse(const Matrix4x4& m);
 //ベクトル変換
 Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
 // 3次元アフィン変換
