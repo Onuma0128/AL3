@@ -28,6 +28,10 @@ void EnemyBullet::Update() {
 	worldTransform_.translation_ = Add(velocity_, worldTransform_.translation_);
 	worldTransform_.matWorld_ = MakeAfineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
 	worldTransform_.UpdateMatrix();
+	// 時間経過でデス
+	if (--deathTimer_ <= 0) {
+		isDead_ = true;
+	}
 }
 
 void EnemyBullet::onCollision() { isDead_ = true; }

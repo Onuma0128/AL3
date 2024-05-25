@@ -5,6 +5,9 @@
 #include <list>
 #include "EnemyBullet.h"
 
+//GameSceneの前方宣言
+class GameScene;
+
 // 自機クラスの前方宣言
 class Player;
 
@@ -26,8 +29,10 @@ public:
 	/// <param name="textureHandle">テクスチャハンドル</param>
 	void Initialize(Model* model, uint32_t textureHandle);
 	void SetPlayer(Player* player) { player_ = player; }
+	void SetEnemyPosition(const Vector3& pos);
 	// ワールド座標を取得
 	Vector3 GetWorldPosition();
+	bool IsDead() const { return isDead_; }
 
 	/// <summary>
 	/// 更新
@@ -38,12 +43,12 @@ public:
 	// 衝突を検出したら呼び出しされるコールバック関数
 	void onCollision();
 	// 弾リストを取得
-	const std::list<EnemyBullet*>& GetBullet() const { return bullets_; }
+	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 
 	/// <summary>
 	/// 弾発射
 	/// </summary>
-	void Fire();
+	//void Fire();
 
 	/// <summary>
 	/// 描画
@@ -52,7 +57,7 @@ public:
 	void Draw(ViewProjection& viewProjection);
 
 public:
-	static const int kFireInterval = 60;
+	//static const int kFireInterval = 60;
 private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;
@@ -67,12 +72,10 @@ private:
 	};
 	// フェーズ
 	Phase phase_ = Phase::Approach;
-	// 敵の弾
-	EnemyBullet* bullet_ = nullptr;
-	// 複数弾
-	std::list<EnemyBullet*> bullets_;
-	// 発射タイマー
-	int32_t Timer_ = 0;
 	//自キャラ
 	Player* player_ = nullptr;
+	//ゲームシーン
+	GameScene* gameScene_ = nullptr;
+	// デスフラグ
+	bool isDead_ = false;
 };

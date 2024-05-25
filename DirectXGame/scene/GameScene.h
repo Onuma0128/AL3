@@ -12,6 +12,7 @@
 #include "RailCamera.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include <sstream>
 
 /// <summary>
 /// ゲームシーン
@@ -35,6 +36,24 @@ public: // メンバ関数
 	void Initialize();
 
 	/// <summary>
+	/// 敵を追加する
+	/// </summary>
+	void AddEnemyBullet(Enemy* enemy);
+	/// <summary>
+	/// 敵発生データの読み込み
+	/// </summary>
+	void LoadEnemyPopData();
+	/// <summary>
+	/// 敵発生コマンドの更新
+	/// </summary>
+	void UpdateEnemyPopCommands();
+
+	/// <summary>
+	/// 敵弾を追加する
+	/// </summary>
+	void AddEnemyBullet(EnemyBullet* enemyBullet);
+
+	/// <summary>
 	/// 毎フレーム処理
 	/// </summary>
 	void Update();
@@ -42,11 +61,17 @@ public: // メンバ関数
 	/// 衝突判定と応答
 	/// </summary>
 	void CheckAllCollisions();
+	/// <summary>
+	/// 弾発射
+	/// </summary>
+	void Fire();
 
 	/// <summary>
 	/// 描画
 	/// </summary>
 	void Draw();
+
+	static const int kFireInterval = 60;
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -62,6 +87,15 @@ private: // メンバ変数
 	Player* player_ = nullptr;
 	//敵
 	Enemy* enemy_ = nullptr;
+	int32_t waitTime_;
+	bool waitEnemy_;
+	std::list<Enemy*> enemys_;
+	//敵発生コマンド
+	std::stringstream enemyPopCommands;
+	//  複数弾
+	std::list<EnemyBullet*> enemyBullets_;
+	// 発射タイマー
+	int32_t Timer_ = 0;
 	// デバッグカメラ有効
 	bool isDebugCameraActive_ = false;
 	// デバッグカメラ

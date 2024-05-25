@@ -4,9 +4,7 @@
 #include <cassert>
 
 Enemy::~Enemy() { 
-	for (EnemyBullet* bullet : bullets_) {
-		delete bullet;
-	}
+
 }
 
 void Enemy::Initialize(Model* model, uint32_t textureHandle) {
@@ -20,24 +18,13 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 	worldTransform_.translation_.z = 50.0f;
 }
 
-Vector3 Enemy::GetWorldPosition() {
-	// ワールド座標を入れる変数
-	Vector3 worldPos;
-	// ワールド行列の平行成分を取得
-	worldPos = worldTransform_.translation_;
+void Enemy::SetEnemyPosition(const Vector3& pos) { worldTransform_.translation_ = pos; }
 
-	return worldPos;
+Vector3 Enemy::GetWorldPosition() { 
+	return Transform(Vector3{0, 0, 0}, worldTransform_.matWorld_); 
 }
 
 void Enemy::Update() {
-	// デスフラグの立った弾を削除
-	bullets_.remove_if([](EnemyBullet* bullet) {
-		if (bullet->IsDead()) {
-			delete bullet;
-			return true;
-		}
-		return false;
-	});
 	// 敵の移動ベクトル
 	Vector3 move_ = {0, 0, -0.01f};
 	//移動処理
@@ -52,17 +39,9 @@ void Enemy::Update() {
 	}
 	// 行列を定数バッファに転送
 	worldTransform_.UpdateMatrix();
-	for (EnemyBullet* bullet : bullets_){
-		bullet->Update();
-	}
 }
 
 void Enemy::Phase_Approach(Vector3& move) {
-	Timer_--;
-	if (Timer_ < 0) {
-		Fire();
-		Timer_ = kFireInterval;
-	}
 	// 移動(ベクトルを加算)
 	worldTransform_.translation_ = Add(worldTransform_.translation_, move);
 	//// スケーリング行列の作成
@@ -80,28 +59,9 @@ void Enemy::Phase_Leave(Vector3& move) {
 	worldTransform_.translation_ = Add(worldTransform_.translation_, move);
 }
 
-void Enemy::onCollision() {}
-
-void Enemy::Fire() {
-	// 弾の速度
-	const float kBulletSpeed = 0.5f;
-
-	Vector3 worldPlayerPos = player_->GetWorldPosition();
-	Vector3 worldEnemyPos = GetWorldPosition();
-	Vector3 Vector = Subtract(worldPlayerPos, worldEnemyPos);
-	Vector3 normaLizeVector = Normalize(Vector);
-	Vector3 velocity = Multiply(kBulletSpeed, normaLizeVector);
-
-	EnemyBullet* newBullet = new EnemyBullet();
-	newBullet->Initalize(model_,worldTransform_.translation_,velocity);
-
-	bullets_.push_back(newBullet);
-}
+void Enemy::onCollision() { isDead_ = true; }
 
 void Enemy::Draw(ViewProjection& viewProjection) {
 	// 3Dモデルを描画
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
-	for (EnemyBullet* bullet : bullets_){
-		bullet->Draw(viewProjection);
-	}
 }
