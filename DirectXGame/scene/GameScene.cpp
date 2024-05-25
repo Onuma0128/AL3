@@ -56,6 +56,8 @@ void GameScene::Initialize() {
 	player_->Initialize(model_, textureHandle_, playerPosition);
 
 	LoadEnemyPopData();
+	//レティクルのテクスチャ
+	TextureManager::Load("2dReticle.png");
 }
 
 void GameScene::AddEnemyBullet(Enemy* enemy) {
@@ -164,7 +166,7 @@ void GameScene::Update() {
 	// 天球の更新
 	skydome_->Update();
 	// 自キャラの更新
-	player_->Update();
+	player_->Update(viewProjection_);
 
 	UpdateEnemyPopCommands();
 	// デスフラグの立った敵を削除
@@ -320,6 +322,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
+	player_->DrawUI();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();

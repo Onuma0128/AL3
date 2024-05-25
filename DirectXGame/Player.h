@@ -5,6 +5,8 @@
 #include "WorldTransform.h"
 #include "MT3.h"
 #include <list>
+#include <Sprite.h>
+#include <WinApp.h>
 
 /// <summary>
 /// 自キャラ
@@ -32,7 +34,7 @@ public:
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	void Update(const ViewProjection& viewProjection);
 	//衝突を検出したら呼び出しされるコールバック関数
 	void onCollision();
 	// 弾リストを取得
@@ -43,6 +45,11 @@ public:
 	/// </summary>
 	/// <param name="viewProjection">ビュープロジェクション(参照渡し)</param>
 	void Draw(ViewProjection& viewProjection);
+	/// <summary>
+	/// 描画
+	/// </summary>
+	/// <param name="viewProjection">ビュープロジェクション(参照渡し)</param>
+	void DrawUI();
 
 	/// <summary>
 	/// 旋回
@@ -69,4 +76,8 @@ private:
 	PlayerBullet* bullet_ = nullptr;
 	//複数弾
 	std::list<PlayerBullet*> bullets_;
+	//3Dレティクル用ワールドトランスフォーム
+	WorldTransform worldTransform3DReticle_;
+	//2Dレティクル用スプライト
+	Sprite* sprite2DReticle_ = nullptr;
 };

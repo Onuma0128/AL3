@@ -25,6 +25,18 @@ Vector3 Multiply(float scalar, const Vector3& v) {
 	return result;
 }
 
+Vector3 Multiply(const Vector3& v1, const Vector3& v2) { return Vector3(v1.x * v2.x, v1.y * v2.y, v1.z * v2.z); }
+
+Vector3 Multiply(const Vector3& v, const Matrix4x4& M) {
+	Vector3 result;
+
+	result.x = v.x * M.m[0][0] + v.y * M.m[1][0] + v.z * M.m[2][0] + 1.0f * M.m[3][0];
+	result.y = v.x * M.m[0][1] + v.y * M.m[1][1] + v.z * M.m[2][1] + 1.0f * M.m[3][1];
+	result.z = v.x * M.m[0][2] + v.y * M.m[1][2] + v.z * M.m[2][2] + 1.0f * M.m[3][2];
+
+	return result;
+}
+
 float Length(const Vector3& v) {
 	float result{};
 	result = sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
@@ -159,10 +171,7 @@ Matrix4x4 MakeAfineMatrix(const Vector3& scale, const Vector3& rotate, const Vec
 	// 拡大縮小行列
 	Matrix4x4 m1{scale.x, 0, 0, 0, 0, scale.y, 0, 0, 0, 0, scale.z, 0, 0, 0, 0, 1};
 	// 回転行列
-	Matrix4x4 rotateXMatrix = MakeRotateXMatrix(rotate.x);
-	Matrix4x4 rotateYMatrix = MakeRotateYMatrix(rotate.y);
-	Matrix4x4 rotateZMatrix = MakeRotateZMatrix(rotate.z);
-	Matrix4x4 m2 = Multiply(rotateXMatrix, Multiply(rotateYMatrix, rotateZMatrix));
+	Matrix4x4 m2 = MakeRotateMatrix(rotate);
 	// 平行移動行列
 	Matrix4x4 m3{
 	    1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, translate.x, translate.y, translate.z, 1,
@@ -174,6 +183,11 @@ Matrix4x4 MakeAfineMatrix(const Vector3& scale, const Vector3& rotate, const Vec
 	return result;
 }
 
+Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, float minDepth, float maxDepth) {
+	Matrix4x4 result{width / 2, 0, 0, 0, 0, -height / 2, 0, 0, 0, 0, maxDepth - minDepth, 0, left + width / 2, top + height / 2, minDepth, 1};
+	return result;
+}
+
 bool circleCollision(Vector3 v1, Vector3 v2, float radiusV1, float radiusV2) { 
 	if ((v2.x - v1.x) * (v2.x - v1.x) + (v2.y - v1.y) * (v2.y - v1.y) + (v2.z - v1.z) * (v2.z - v1.z) <= 
 		(radiusV1 + radiusV2) * (radiusV1 + radiusV2)) {
@@ -181,6 +195,14 @@ bool circleCollision(Vector3 v1, Vector3 v2, float radiusV1, float radiusV2) {
 	} else {
 		return false;
 	}
+}
+
+Matrix4x4 MakeRotateMatrix(const Vector3& rotate) {
+	Matrix4x4 rotateXMatrix = MakeRotateXMatrix(rotate.x);
+	Matrix4x4 rotateYMatrix = MakeRotateYMatrix(rotate.y);
+	Matrix4x4 rotateZMatrix = MakeRotateZMatrix(rotate.z);
+	Matrix4x4 m2 = Multiply(rotateXMatrix, Multiply(rotateYMatrix, rotateZMatrix));
+	return m2;
 }
 
 Matrix4x4 MakeRotateXMatrix(float radian) {
