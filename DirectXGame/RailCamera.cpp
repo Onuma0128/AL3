@@ -15,7 +15,7 @@ void RailCamera::Initialize() {
 
 void RailCamera::Update() {
 	Vector3 move{0.0f, 0.0f, 0.02f};
-	Vector3 rad{0.0f, 0.0f, 0.0f};
+	Vector3 rad{0.0f, 0.001f, 0.0f};
 	worldTransform_.translation_ = Add(worldTransform_.translation_, move);
 	worldTransform_.rotation_ = Add(worldTransform_.rotation_, rad);
 	worldTransform_.matWorld_ = MakeAfineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);

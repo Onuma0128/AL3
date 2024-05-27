@@ -167,7 +167,7 @@ void GameScene::Update() {
 	// 天球の更新
 	skydome_->Update();
 	// 自キャラの更新
-	player_->Update(viewProjection_);
+	player_->Update(railCamera_->GetViewProjection());
 
 	UpdateEnemyPopCommands();
 	// デスフラグの立った敵を削除

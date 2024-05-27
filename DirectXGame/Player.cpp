@@ -35,6 +35,7 @@ Vector3 Player::GetWorldPosition() {
 void Player::SetParent(const WorldTransform* parent) {
 	//親子関係を結ぶ
 	worldTransform_.parent_ = parent;
+	worldTransform3DReticle_.parent_ = parent;
 }
 
 void Player::Update(const ViewProjection& viewProjection) {
@@ -100,28 +101,28 @@ void Player::Update(const ViewProjection& viewProjection) {
 	}
 	// 自機のワールド座標から3Dレティクルのワールド座標を計算
 	const float kDistancePlayerTo3DReticle = 50.0f;
-	worldTransform3DReticle_.parent_ = worldTransform_.parent_;
 	// 自機から3Dレティクルへのオフセット(Z+向き)
 	Vector3 offset = {0, 0, 1.0f};
 	// 自機のワールド行列の回転を反映
-	offset = TransformNormal(offset, worldTransform_.matWorld_);
+	Matrix4x4 rotateMatrix = MakeRotateMatrix(worldTransform_.rotation_);
+	offset = TransformNormal(offset, rotateMatrix);
+	//offset = TransformNormal(offset, worldTransform_.matWorld_);
 	// ベクトルの長さを整える
 	offset = Multiply(kDistancePlayerTo3DReticle, Normalize(offset));
 	// 3Dレティクルの座標を設定
 	worldTransform3DReticle_.translation_ = Add(worldTransform_.translation_, offset);
-	ImGui::Begin("Reticle");
-	ImGui::SliderFloat3("3DReticle.position", &worldTransform3DReticle_.translation_.x,-50,100);
-	ImGui::End();
 	worldTransform3DReticle_.matWorld_ = MakeAfineMatrix(worldTransform3DReticle_.scale_, worldTransform3DReticle_.rotation_, worldTransform3DReticle_.translation_);
 	worldTransform3DReticle_.UpdateMatrix();
 
 	// 3Dレティクルのワールド座標から2Dレティクルのスクリーン座標を計算
-	Vector3 positionReticle_ = worldTransform3DReticle_.translation_;
-	positionReticle_.z += t;
-	t += 0.02f;
+	Vector3 positionReticle_ = Transform(Vector3(0, 0, 0), worldTransform3DReticle_.matWorld_);
+	//ビューポート行列
 	Matrix4x4 matViewport = MakeViewportMatrix(0, 0, WinApp::kWindowWidth, WinApp::kWindowHeight, 0, 1);
+	//ビュー行列とプロジェクション行列、ビューポート行列を合成する
 	Matrix4x4 matViewProjectionViewport = Multiply(Multiply(viewProjection.matView, viewProjection.matProjection), matViewport);
+	//ワールド→スクリーン座標変換(ここで3Dから2Dになる)
 	positionReticle_ = Transform(positionReticle_, matViewProjectionViewport);
+	//スプライトのレティクルに座標を設定
 	sprite2DReticle_->SetPosition(Vector2(positionReticle_.x, positionReticle_.y));
 
 
