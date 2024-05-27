@@ -104,8 +104,6 @@ void Player::Update(const ViewProjection& viewProjection) {
 	// 自機から3Dレティクルへのオフセット(Z+向き)
 	Vector3 offset = {0, 0, 1.0f};
 	// 自機のワールド行列の回転を反映
-	//Matrix4x4 rotateMatrix = MakeRotateMatrix(worldTransform_.rotation_);
-	//offset = TransformNormal(offset, rotateMatrix);
 	offset = TransformNormal(offset, worldTransform_.matWorld_);
 	// ベクトルの長さを整える
 	offset = Multiply(kDistancePlayerTo3DReticle, Normalize(offset));
@@ -125,6 +123,7 @@ void Player::Update(const ViewProjection& viewProjection) {
 	Matrix4x4 matViewProjectionViewport = Multiply(Multiply(viewProjection.matView, viewProjection.matProjection), matViewport);
 	positionReticle_ = Transform(positionReticle_, matViewProjectionViewport);
 	sprite2DReticle_->SetPosition(Vector2(positionReticle_.x, positionReticle_.y));
+
 
 	ImGui::Begin("Reticle");
 	ImGui::SliderFloat3("2DReticle.position", &positionReticle_.x,-50,50);
