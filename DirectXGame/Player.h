@@ -80,4 +80,5 @@ private:
 	WorldTransform worldTransform3DReticle_;
 	//2Dレティクル用スプライト
 	Sprite* sprite2DReticle_ = nullptr;
+	float t = 0;
 };

@@ -4,7 +4,7 @@
 
 void RailCamera::Initialize() {
 	// ワールドトランスフォームの初期化
-	worldTransform_.translation_ = {0, 0, -50};
+	worldTransform_.translation_ = {0, 0, 0};
 	worldTransform_.rotation_ = {0, 0, 0};
 	//worldTransform_.matWorld_ = Inverse(view.matView);
 	// ビュープロジェクションの初期化
@@ -14,7 +14,7 @@ void RailCamera::Initialize() {
 }
 
 void RailCamera::Update() {
-	Vector3 move{0.0f, 0.0f, 0.0f};
+	Vector3 move{0.0f, 0.0f, 0.02f};
 	Vector3 rad{0.0f, 0.0f, 0.0f};
 	worldTransform_.translation_ = Add(worldTransform_.translation_, move);
 	worldTransform_.rotation_ = Add(worldTransform_.rotation_, rad);
