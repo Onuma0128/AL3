@@ -39,6 +39,10 @@ Matrix4x4 Inverse(const Matrix4x4& m);
 Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
 // 3次元アフィン変換
 Matrix4x4 MakeAfineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
+// 投資投影行列
+Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspecRatio, float nearClip, float farClip);
+// 正射影行列
+Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float bottom, float nearClip, float farClip);
 // ビューポート変換行列
 Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, float minDepth, float maxDepth);
 
