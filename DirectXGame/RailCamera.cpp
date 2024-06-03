@@ -8,7 +8,7 @@ void RailCamera::Initialize() {
 	worldTransform_.rotation_ = {0, 0, 0};
 	//worldTransform_.matWorld_ = Inverse(view.matView);
 	// ビュープロジェクションの初期化
-	viewProjection_.farZ = 650;
+	viewProjection_.farZ = 10000;
 	viewProjection_.Initialize();
 
 }
