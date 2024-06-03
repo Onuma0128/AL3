@@ -21,8 +21,8 @@ public:
 	/// 更新
 	/// </summary>
 	void Update();
-	void Phase_Approach(Vector3& move);
-	void Phase_Leave(Vector3& move);
+	void Phase_Approach();
+	void Phase_Leave();
 
 	/// <summary>
 	/// 描画
@@ -31,16 +31,16 @@ public:
 	void Draw(ViewProjection& viewProjection);
 
 private:
+	// メンバ関数ポインタ
+	static void (Enemy::*spFuncTable[])();
+
+private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;
 	// モデル
 	Model* model_ = nullptr;
 	// テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
-	enum class Phase {
-		Approach, // 接近する
-		Leave,    // 離脱する
-	};
-	// フェーズ
-	Phase phase_ = Phase::Approach;
+	// 敵の移動ベクトル
+	Vector3 move_ = {};
 };
