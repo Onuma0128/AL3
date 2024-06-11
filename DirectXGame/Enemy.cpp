@@ -21,12 +21,7 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 }
 
 Vector3 Enemy::GetWorldPosition() {
-	// ワールド座標を入れる変数
-	Vector3 worldPos;
-	// ワールド行列の平行成分を取得
-	worldPos = worldTransform_.translation_;
-
-	return worldPos;
+	return Transform(Vector3{0, 0, 0}, worldTransform_.matWorld_);
 }
 
 void Enemy::Update() {
@@ -54,6 +49,7 @@ void Enemy::Update() {
 	worldTransform_.UpdateMatrix();
 	for (EnemyBullet* bullet : bullets_){
 		bullet->Update();
+		bullet->SetPlayer(player_);
 	}
 }
 
@@ -91,6 +87,7 @@ void Enemy::Fire() {
 	Vector3 velocity = Multiply(kBulletSpeed, normaLizeVector);
 
 	EnemyBullet* newBullet = new EnemyBullet();
+	newBullet->SetPlayer(player_);
 	newBullet->Initalize(model_,worldTransform_.translation_,velocity);
 
 	bullets_.push_back(newBullet);

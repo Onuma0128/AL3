@@ -20,11 +20,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 
 Vector3 Player::GetWorldPosition() { 
 	//ワールド座標を入れる変数
-	Vector3 worldPos;
-	//ワールド行列の平行成分を取得
-	worldPos = worldTransform_.translation_;
-
-	return worldPos;
+	return Transform(Vector3{0, 0, 0}, worldTransform_.matWorld_);
 }
 
 void Player::Update() {

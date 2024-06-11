@@ -4,10 +4,13 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 
+class Player;
+
 class EnemyBullet {
 public:
 	/// 初期化
 	void Initalize(Model* model, const Vector3& position, const Vector3& velocity);
+	void SetPlayer(Player* player) { player_ = player; }
 
 	/// 更新
 	void Update();
@@ -27,4 +30,7 @@ private:
 	Vector3 velocity_;
 	// デスフラグ
 	bool isDead_ = false;
+
+	Player* player_ = nullptr;
+	float t = 0;
 };
