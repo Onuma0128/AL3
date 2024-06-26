@@ -15,6 +15,7 @@ Matrix4x4 MakeRotateZMatrix(float radian);
 // 行列の積
 Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2);
 //ベクトル変換
+Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix);
 Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
     // 3次元アフィン変換
 Matrix4x4 MakeAfineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);

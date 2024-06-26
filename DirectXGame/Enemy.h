@@ -3,6 +3,7 @@
 #include "Model.h"
 #include "WorldTransform.h"
 #include <list>
+#include "BaseEnemyState.h"
 
 /// <summary>
 /// 敵
@@ -16,13 +17,16 @@ public:
 	/// <param name="model">モデル</param>
 	/// <param name="textureHandle">テクスチャハンドル</param>
 	void Initialize(Model* model, uint32_t textureHandle);
+	Vector3 GetWorldPosition();
 
 	/// <summary>
 	/// 更新
 	/// </summary>
 	void Update();
-	void Phase_Approach();
-	void Phase_Leave();
+	// 状態変更
+	void ChangeState(std::unique_ptr<BaseEnemyState> state);
+
+	void EnemyMove(const Vector3& move);
 
 	/// <summary>
 	/// 描画
@@ -31,16 +35,13 @@ public:
 	void Draw(ViewProjection& viewProjection);
 
 private:
-	// メンバ関数ポインタ
-	static void (Enemy::*spFuncTable[])();
-
-private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;
 	// モデル
 	Model* model_ = nullptr;
 	// テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
-	// 敵の移動ベクトル
-	Vector3 move_ = {};
+	// 敵の状態
+	std::unique_ptr<BaseEnemyState> state_;
+
 };
