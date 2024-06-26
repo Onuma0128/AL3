@@ -1,6 +1,7 @@
 #include "RailCamera.h"
 #include "MT3.h"
 #include "ImGuiManager.h"
+#include "PrimitiveDrawer.h"
 
 void RailCamera::Initialize() {
 	// ワールドトランスフォームの初期化
@@ -10,12 +11,11 @@ void RailCamera::Initialize() {
 	// ビュープロジェクションの初期化
 	viewProjection_.farZ = 650;
 	viewProjection_.Initialize();
-
 }
 
 void RailCamera::Update() {
-	Vector3 move{0.0f, 0.0f, 0.0f};
-	Vector3 rad{0.0f, 0.001f, 0.0f};
+	Vector3 move{0.0f, 0.0f, 0.01f};
+	Vector3 rad{0.0f, 0.0f, 0.0f};
 	worldTransform_.translation_ = Add(worldTransform_.translation_, move);
 	worldTransform_.rotation_ = Add(worldTransform_.rotation_, rad);
 	worldTransform_.matWorld_ = MakeAfineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);

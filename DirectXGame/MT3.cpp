@@ -1,5 +1,7 @@
 #include "MT3.h"
 #include <cassert>
+#include <iostream>
+#include <algorithm>
 
 Vector3 Add(const Vector3& v1, const Vector3& v2) {
 	Vector3 result{};
@@ -172,6 +174,65 @@ Matrix4x4 MakeAfineMatrix(const Vector3& scale, const Vector3& rotate, const Vec
 	Matrix4x4 result = Multiply(m4, m3);
 
 	return result;
+}
+
+float Clamp(float& t, float min, float max) { 
+	if (t < min) {
+		t = min;
+	}
+	if (t > max) {
+		t = max;
+	}
+	return t;
+}
+
+Vector3 CatmullRomInterpolation(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Vector3& p3, float t) { 
+	const float s = 0.5f;
+
+	float t2 = t * t;
+	float t3 = t2 * t;
+	Vector3 p0_ = Multiply(-1.0f, p0);
+
+	Vector3 e3 = Subtract(Add(p0_,Multiply(3, p1)),Add(Multiply(3, p2),p3));
+	Vector3 e2 = Add(Subtract(Multiply(2, p0),Multiply(5, p1)),Subtract(Multiply(4, p2),p3));
+	Vector3 e1 = Add(p0_, p2);
+	Vector3 e0 = Multiply(2, p1);
+
+	return Multiply(s, Add(Add(Multiply(t3, e3), Multiply(t2, e2)), Add(Multiply(t, e1), e0)));
+}
+
+Vector3 CatmullRomPosition(const std::vector<Vector3>& points, float t) {
+	assert(points.size()>=4&&"制御点が足りません");
+	//区間数は制御点の数-1
+	size_t division = points.size() - 1;
+	//1区間の長さ(全体を1.0とした割合)
+	float areaWidth = 1.0f / division;
+	//区間内の始点を0.0f、終点を1.0fとした時の現在位置
+	float t_2 = std::fmod(t, areaWidth) * division;
+	//下限(0.0f)と上限(1.0f)の範囲に収める
+	t_2 = std::clamp(t_2, 0.0f, 1.0f);
+	//区間番号
+	size_t index = static_cast<size_t>(t / areaWidth);
+	//区間番号が上限を超えないように収める
+	index = static_cast<size_t>(std::clamp(static_cast<float>(index), 0.0f, 1.0f));
+	//４点分のインデックス
+	size_t index0 = index - 1;
+	size_t index1 = index;
+	size_t index2 = index + 1;
+	size_t index3 = index + 2;
+	if (index == 0) {
+		index0 = index1;
+	}
+	if (index3 >= points.size()) {
+		index3 = index2;
+	}
+	//4点の座標
+	const Vector3& p0 = points[index0];
+	const Vector3& p1 = points[index1];
+	const Vector3& p2 = points[index2];
+	const Vector3& p3 = points[index3];
+
+	return CatmullRomInterpolation(p0, p1, p2, p3, t_2);
 }
 
 bool circleCollision(Vector3 v1, Vector3 v2, float radiusV1, float radiusV2) { 

@@ -12,6 +12,7 @@
 #include "RailCamera.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "PrimitiveDrawer.h"
 
 /// <summary>
 /// ゲームシーン
@@ -72,6 +73,9 @@ private: // メンバ変数
 	Model* modelSkydome_ = nullptr;
 	//レールカメラ
 	RailCamera* railCamera_ = nullptr;
+
+	std::vector<Vector3> controlPoints_;
+	std::vector<Vector3> pointsDrawing_;
 
 	/// <summary>
 	/// ゲームシーン用

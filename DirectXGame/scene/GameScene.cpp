@@ -12,6 +12,7 @@ GameScene::~GameScene() {
 	delete debugCamera_;
 	delete skydome_;
 	delete modelSkydome_;
+	delete railCamera_;
 }
 
 void GameScene::Initialize() {
@@ -47,13 +48,22 @@ void GameScene::Initialize() {
 	//天球の初期化
 	skydome_->Initialize(modelSkydome_);
 	//レールカメラの生成
-	railCamera_ = new RailCamera(); 
+	railCamera_ = new RailCamera();
 	railCamera_->Initialize();
 	// 自キャラとレールカメラの親子関係を結ぶ
 	player_->SetParent(&railCamera_->GetWorldTransform());
 	// 自キャラの初期化
 	Vector3 playerPosition(0, 0, 50);
 	player_->Initialize(model_, textureHandle_, playerPosition);
+
+	controlPoints_ = {
+	    {0,  0,  0},
+        {10, 10, 0},
+        {10, 15, 0},
+        {20, 15, 0},
+        {20, 0,  0},
+        {30, 0,  0}
+    };
 }
 
 void GameScene::Update() {
@@ -85,6 +95,13 @@ void GameScene::Update() {
 	player_->Update();
 	// 敵キャラの更新
 	enemy_->Update();
+
+	const size_t segmentCount = 100;
+	for (size_t i = 0; i < segmentCount + 1; i++) {
+		float t = 1.0f / segmentCount * i;
+		Vector3 pos = CatmullRomPosition(controlPoints_, t);
+		pointsDrawing_.push_back(pos);
+	}
 }
 
 void GameScene::CheckAllCollisions() {
@@ -173,6 +190,10 @@ void GameScene::Draw() {
 	player_->Draw(viewProjection_);
 	//敵の描画
 	enemy_->Draw(viewProjection_);
+	const size_t segmentCount = 100;
+	for (size_t i = 0; i < segmentCount; i++) {
+		primitive.DrawLine3d(pointsDrawing_[i], pointsDrawing_[i + 1], Vector4{1.0f, 0.0f, 0.0f, 1.0f});
+	}
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
