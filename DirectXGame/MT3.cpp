@@ -215,7 +215,7 @@ Vector3 CatmullRomPosition(const std::vector<Vector3>& points, float t) {
 	size_t index = static_cast<size_t>(t / areaWidth);
 	//区間番号が上限を超えないように収める
 	index = static_cast<size_t>(std::clamp(static_cast<float>(index), 0.0f, 1.0f));
-	//４点分のインデックス
+	//4点分のインデックス
 	size_t index0 = index - 1;
 	size_t index1 = index;
 	size_t index2 = index + 1;
@@ -227,10 +227,10 @@ Vector3 CatmullRomPosition(const std::vector<Vector3>& points, float t) {
 		index3 = index2;
 	}
 	//4点の座標
-	const Vector3& p0 = points[index0];
-	const Vector3& p1 = points[index1];
-	const Vector3& p2 = points[index2];
-	const Vector3& p3 = points[index3];
+	const Vector3& p0 = points[std::clamp(index0, size_t(0), points.size() - 1)];
+	const Vector3& p1 = points[std::clamp(index1, size_t(0), points.size() - 1)];
+	const Vector3& p2 = points[std::clamp(index2, size_t(0), points.size() - 1)];
+	const Vector3& p3 = points[std::clamp(index3, size_t(0), points.size() - 1)];
 
 	return CatmullRomInterpolation(p0, p1, p2, p3, t_2);
 }

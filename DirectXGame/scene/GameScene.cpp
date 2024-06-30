@@ -64,6 +64,8 @@ void GameScene::Initialize() {
         {20, 0,  0},
         {30, 0,  0}
     };
+	// ライン描画が参照するビュープロジェクションを指定する(アドレス渡し)
+	PrimitiveDrawer::GetInstance()->SetViewProjection(&viewProjection_);
 }
 
 void GameScene::Update() {
@@ -81,13 +83,13 @@ void GameScene::Update() {
 		viewProjection_.TransferMatrix();
 	} else {
 		viewProjection_.UpdateMatrix();
+		// レールカメラ
+		railCamera_->Update();
+		viewProjection_.matView = railCamera_->GetViewProjection().matView;
+		viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
+		viewProjection_.TransferMatrix();
 	}
 	CheckAllCollisions();
-	//レールカメラ
-	railCamera_->Update();
-	viewProjection_.matView = railCamera_->GetViewProjection().matView;
-	viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
-	viewProjection_.TransferMatrix();
 
 	// 天球の更新
 	skydome_->Update();
@@ -190,13 +192,14 @@ void GameScene::Draw() {
 	player_->Draw(viewProjection_);
 	//敵の描画
 	enemy_->Draw(viewProjection_);
-	const size_t segmentCount = 100;
-	for (size_t i = 0; i < segmentCount; i++) {
-		primitive.DrawLine3d(pointsDrawing_[i], pointsDrawing_[i + 1], Vector4{1.0f, 0.0f, 0.0f, 1.0f});
-	}
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
+
+	const size_t segmentCount = 100;
+	for (size_t i = 0; i < segmentCount; i++) {
+		PrimitiveDrawer::GetInstance()->DrawLine3d(pointsDrawing_[i], pointsDrawing_[i + 1], Vector4{1.0f, 0.0f, 0.0f, 1.0f});
+	}
 
 #pragma endregion
 
