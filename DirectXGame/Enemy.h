@@ -4,6 +4,7 @@
 #include "WorldTransform.h"
 #include <list>
 #include "EnemyBullet.h"
+#include "TimedCall.h"
 
 /// <summary>
 /// 敵
@@ -22,6 +23,10 @@ public:
 	/// <param name="model">モデル</param>
 	/// <param name="textureHandle">テクスチャハンドル</param>
 	void Initialize(Model* model, uint32_t textureHandle);
+	/// <summary>
+	/// 弾を発射し、タイマーをリセットするコールバック関数
+	/// </summary>
+	void ResetFireTimer();
 
 	/// <summary>
 	/// 更新
@@ -60,6 +65,6 @@ private:
 	EnemyBullet* bullet_ = nullptr;
 	// 複数弾
 	std::list<EnemyBullet*> bullets_;
-	// 発射タイマー
-	int32_t Timer_ = 0;
+	//時限発動のリスト
+	std::list<TimedCall*> timedCalls_;
 };
