@@ -11,6 +11,7 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "Collider.h"
+#include "CollisionManager.h"
 
 /// <summary>
 /// ゲームシーン
@@ -71,6 +72,8 @@ private: // メンバ変数
 	bool isDebugCameraActive_ = false;
 	// デバッグカメラ
 	DebugCamera* debugCamera_ = nullptr;
+	// 衝突マネージャ
+	CollisionManager* collisionManager_ = nullptr;
 
 	/// <summary>
 	/// ゲームシーン用

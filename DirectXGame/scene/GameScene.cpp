@@ -10,6 +10,7 @@ GameScene::~GameScene() {
 	delete player_;
 	delete enemy_;
 	delete debugCamera_;
+	delete collisionManager_;
 }
 
 void GameScene::Initialize() {
@@ -39,6 +40,8 @@ void GameScene::Initialize() {
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
 	//敵キャラに自キャラのアドレスを渡す
 	enemy_->SetPlayer(player_);
+	// 衝突マネージャを生成
+	collisionManager_ = new CollisionManager();
 }
 
 void GameScene::Update() {
@@ -87,38 +90,26 @@ void GameScene::Update() {
 //#pragma endregion
 //}
 void GameScene::CheckAllCollisions() {
-	// 自弾リストの取得
+	collisionManager_->ClearColliders();
+
+	// プレイヤーと敵のコライダーを登録
+	collisionManager_->RegisterCollider(player_);
+	collisionManager_->RegisterCollider(enemy_);
+
+	// プレイヤーの弾のコライダーを登録
 	const std::list<PlayerBullet*>& playerBullets = player_->GetBullet();
-	// 敵弾リストの取得
-	const std::list<EnemyBullet*>& enemyBullets = enemy_->GetBullet();
-	// コライダー
-	std::list<Collider*> colliders_;
-	// コライダーをリストに登録
-	colliders_.push_back(player_);
-	colliders_.push_back(enemy_);
-	// 自弾全てについて
 	for (PlayerBullet* playerBullet : playerBullets) {
-		colliders_.push_back(playerBullet);
+		collisionManager_->RegisterCollider(playerBullet);
 	}
-	// 敵弾全てについて
+
+	// 敵の弾のコライダーを登録
+	const std::list<EnemyBullet*>& enemyBullets = enemy_->GetBullet();
 	for (EnemyBullet* enemyBullet : enemyBullets) {
-		colliders_.push_back(enemyBullet);
+		collisionManager_->RegisterCollider(enemyBullet);
 	}
-	// リスト内のペアの総当たり
-	std::list<Collider*>::iterator itrA = colliders_.begin();
-	for (; itrA != colliders_.end(); ++itrA) {
-		// イテレータAからコライダーをAを取得する
-		Collider* colliderA = *itrA;
-		// イテレータBはイテレータAの次の要素から回す
-		std::list<Collider*>::iterator itrB = itrA;
-		itrB++;
-		for (; itrB != colliders_.end(); ++itrB) {
-			// イテレータBからコライダーをBを取得する
-			Collider* colliderB = *itrB;
-			// ペアの当たり判定
-			CheckCollisionPair(colliderA, colliderB);
-		}
-	}
+
+	// 全ての衝突判定を行う
+	collisionManager_->CheckAllCollisions();
 }
 
 void GameScene::Draw() {
@@ -171,17 +162,17 @@ void GameScene::Draw() {
 #pragma endregion
 }
 
-void GameScene::CheckCollisionPair(Collider* colliderA, Collider* colliderB) {
-	if (colliderA->GetCollisionAttribute() & colliderB->GetCollisionMask() ||
-		colliderB->GetCollisionAttribute() & colliderA->GetCollisionMask()) {
-		return;
-	}
-	Vector3 posA = colliderA->GetWorldPosition();
-	Vector3 posB = colliderB->GetWorldPosition();
-	float radiusA = colliderA->GetRadius();
-	float radiusB = colliderB->GetRadius();
-	if (circleCollision(posA, posB, radiusA, radiusB)) {
-		colliderA->onCollision();
-		colliderB->onCollision();
-	}
-}
+//void GameScene::CheckCollisionPair(Collider* colliderA, Collider* colliderB) {
+//	if (colliderA->GetCollisionAttribute() & colliderB->GetCollisionMask() ||
+//		colliderB->GetCollisionAttribute() & colliderA->GetCollisionMask()) {
+//		return;
+//	}
+//	Vector3 posA = colliderA->GetWorldPosition();
+//	Vector3 posB = colliderB->GetWorldPosition();
+//	float radiusA = colliderA->GetRadius();
+//	float radiusB = colliderB->GetRadius();
+//	if (circleCollision(posA, posB, radiusA, radiusB)) {
+//		colliderA->onCollision();
+//		colliderB->onCollision();
+//	}
+//}
