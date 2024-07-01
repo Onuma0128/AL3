@@ -16,6 +16,10 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 	worldTransform_.Initialize();
 	// シングルトンインスタンスを取得する
 	input_ = Input::GetInstance();
+	// 衝突属性を設定
+	SetCollisionAttribute(0x00000010);
+	// 衝突対象を自分の属性以外に設定
+	SetCollisionMask(0x11111110);
 }
 
 Vector3 Player::GetWorldPosition() { 

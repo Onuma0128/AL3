@@ -18,6 +18,11 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 	worldTransform_.translation_.x = 10.0f;
 	worldTransform_.translation_.y = 2.0f;
 	worldTransform_.translation_.z = 50.0f;
+
+	// 衝突属性を設定
+	SetCollisionAttribute(0x00000001);
+	// 衝突対象を自分の属性以外に設定
+	SetCollisionMask(0x11111101);
 }
 
 Vector3 Enemy::GetWorldPosition() {
