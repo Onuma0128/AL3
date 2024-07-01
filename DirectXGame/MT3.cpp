@@ -191,46 +191,45 @@ Vector3 CatmullRomInterpolation(const Vector3& p0, const Vector3& p1, const Vect
 
 	float t2 = t * t;
 	float t3 = t2 * t;
-	Vector3 p0_ = Multiply(-1.0f, p0);
 
-	Vector3 e3 = Subtract(Add(p0_,Multiply(3, p1)),Add(Multiply(3, p2),p3));
-	Vector3 e2 = Add(Subtract(Multiply(2, p0),Multiply(5, p1)),Subtract(Multiply(4, p2),p3));
-	Vector3 e1 = Add(p0_, p2);
-	Vector3 e0 = Multiply(2, p1);
+	// 各項の計算
+	Vector3 e3 = Add(Add(Subtract(Multiply(3.0f, p1), Multiply(3.0f, p2)), p3), Multiply(-1.0f, p0));
+	Vector3 e2 = Add(Add(Subtract(Multiply(2.0f, p0), Multiply(5.0f, p1)), Multiply(4.0f, p2)), Multiply(-1.0f, p3));
+	Vector3 e1 = Add(Multiply(-1.0f, p0), p2);
+	Vector3 e0 = Multiply(2.0f, p1);
 
-	return Multiply(s, Add(Add(Multiply(t3, e3), Multiply(t2, e2)), Add(Multiply(t, e1), e0)));
+	// 補間結果の計算
+	Vector3 result = Add(Add(Multiply(t3, e3), Multiply(t2, e2)), Add(Multiply(t, e1), e0));
+
+	return Multiply(s, result);
 }
 
 Vector3 CatmullRomPosition(const std::vector<Vector3>& points, float t) {
-	assert(points.size()>=4&&"制御点が足りません");
-	//区間数は制御点の数-1
+	assert(points.size() >= 4 && "制御点が足りません");
+
+	// 区間数は制御点の数 - 1
 	size_t division = points.size() - 1;
-	//1区間の長さ(全体を1.0とした割合)
+	// 1区間の長さ (全体を 1.0 とした割合)
 	float areaWidth = 1.0f / division;
-	//区間内の始点を0.0f、終点を1.0fとした時の現在位置
-	float t_2 = std::fmod(t, areaWidth) * division;
-	//下限(0.0f)と上限(1.0f)の範囲に収める
-	t_2 = std::clamp(t_2, 0.0f, 1.0f);
-	//区間番号
+	// 区間番号
 	size_t index = static_cast<size_t>(t / areaWidth);
-	//区間番号が上限を超えないように収める
-	index = static_cast<size_t>(std::clamp(static_cast<float>(index), 0.0f, 1.0f));
-	//4点分のインデックス
-	size_t index0 = index - 1;
+	// 区間番号が上限を超えないように収める
+	index = std::clamp(index, size_t(0), division - 1);
+	// 区間内の始点を 0.0f、終点を 1.0f とした時の現在位置
+	float t_2 = (t - index * areaWidth) / areaWidth;
+	t_2 = std::clamp(t_2, 0.0f, 1.0f);
+
+	// 4点分のインデックス
+	size_t index0 = (index == 0) ? 0 : index - 1;
 	size_t index1 = index;
 	size_t index2 = index + 1;
-	size_t index3 = index + 2;
-	if (index == 0) {
-		index0 = index1;
-	}
-	if (index3 >= points.size()) {
-		index3 = index2;
-	}
-	//4点の座標
-	const Vector3& p0 = points[std::clamp(index0, size_t(0), points.size() - 1)];
-	const Vector3& p1 = points[std::clamp(index1, size_t(0), points.size() - 1)];
-	const Vector3& p2 = points[std::clamp(index2, size_t(0), points.size() - 1)];
-	const Vector3& p3 = points[std::clamp(index3, size_t(0), points.size() - 1)];
+	size_t index3 = (index + 2 >= points.size()) ? points.size() - 1 : index + 2;
+
+	// 4点の座標
+	const Vector3& p0 = points[index0];
+	const Vector3& p1 = points[index1];
+	const Vector3& p2 = points[index2];
+	const Vector3& p3 = points[index3];
 
 	return CatmullRomInterpolation(p0, p1, p2, p3, t_2);
 }
