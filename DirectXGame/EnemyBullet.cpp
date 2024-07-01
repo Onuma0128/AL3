@@ -27,6 +27,8 @@ Vector3 EnemyBullet::GetWorldPosition() {
 	return worldPos;
 }
 
+float EnemyBullet::GetRadius() { return 1.0f; }
+
 void EnemyBullet::Update() {
 	t += 1.0f / 100.0f;
 	if (t >= 0.05f) {

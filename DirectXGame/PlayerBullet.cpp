@@ -23,6 +23,8 @@ Vector3 PlayerBullet::GetWorldPosition() {
 	return worldPos;
 }
 
+float PlayerBullet::GetRadius() { return 1.0f; }
+
 void PlayerBullet::Update() {
 	worldTransform_.UpdateMatrix();
 	worldTransform_.translation_ = Add(velocity_, worldTransform_.translation_);

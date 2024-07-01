@@ -64,55 +64,24 @@ void GameScene::Update() {
 }
 
 void GameScene::CheckAllCollisions() {
-	//判定対象AとBの座標
-	Vector3 posA, posB;
 	//自弾リストの取得
 	const std::list<PlayerBullet*>& playerBullets = player_->GetBullet();
 	//敵弾リストの取得
 	const std::list<EnemyBullet*>& enemyBullets = enemy_->GetBullet();
 #pragma region //自キャラと敵弾の当たり判定
-	//自キャラの座標
-	posA = player_->GetWorldPosition();
-	//自キャラと敵弾全ての当たり判定
 	for (EnemyBullet* enemyBullet : enemyBullets) {
-		//敵弾の座標
-		posB = enemyBullet->GetWorldPosition();
-		float posAradius = 1.0f;
-		float posBradius = 1.0f;
-		if (circleCollision(posA, posB, posAradius, posBradius)) {
-			player_->onCollision();
-			enemyBullet->onCollision();
-		}
+		CheckCollisionPair(player_, enemyBullet);
 	}
 #pragma endregion
 #pragma region //自弾と敵キャラの当たり判定
-	posA = enemy_->GetWorldPosition();
-	// 自キャラと敵弾全ての当たり判定
 	for (PlayerBullet* playerBullet : playerBullets) {
-		// 敵弾の座標
-		posB = playerBullet->GetWorldPosition();
-		float posAradius = 1.0f;
-		float posBradius = 1.0f;
-		if (circleCollision(posA, posB, posAradius, posBradius)) {
-			enemy_->onCollision();
-			playerBullet->onCollision();
-		}
+		CheckCollisionPair(enemy_, playerBullet);
 	}
 #pragma endregion
 #pragma region //自弾と敵弾の当たり判定
-	// 自キャラと敵弾全ての当たり判定
 	for (PlayerBullet* playerBullet : playerBullets) {
-		// プレイヤーの弾の座標
-		posA = playerBullet->GetWorldPosition();
 		for (EnemyBullet* enemyBullet : enemyBullets) {
-			// 敵の弾の座標
-			posB = enemyBullet->GetWorldPosition();
-			float posAradius = 1.0f;
-			float posBradius = 1.0f;
-			if (circleCollision(posA, posB, posAradius, posBradius)) {
-				playerBullet->onCollision();
-				enemyBullet->onCollision();
-			}
+			CheckCollisionPair(playerBullet, enemyBullet);
 		}
 	}
 #pragma endregion
@@ -166,4 +135,15 @@ void GameScene::Draw() {
 	Sprite::PostDraw();
 
 #pragma endregion
+}
+
+void GameScene::CheckCollisionPair(Collider* colliderA, Collider* colliderB) {
+	Vector3 posA = colliderA->GetWorldPosition();
+	Vector3 posB = colliderB->GetWorldPosition();
+	float radiusA = colliderA->GetRadius();
+	float radiusB = colliderB->GetRadius();
+	if (circleCollision(posA, posB, radiusA, radiusB)) {
+		colliderA->onCollision();
+		colliderB->onCollision();
+	}
 }

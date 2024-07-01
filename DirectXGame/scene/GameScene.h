@@ -10,6 +10,7 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "Collider.h"
 
 /// <summary>
 /// ゲームシーン
@@ -45,6 +46,12 @@ public: // メンバ関数
 	/// 描画
 	/// </summary>
 	void Draw();
+
+private:
+    /// <summary>
+    /// コライダー2つの衝突判定と応答
+    /// </summary>
+	void CheckCollisionPair(Collider* colliderA, Collider* colliderB);
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;

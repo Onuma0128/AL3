@@ -21,8 +21,9 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 }
 
 Vector3 Enemy::GetWorldPosition() {
-	return Transform(Vector3{0, 0, 0}, worldTransform_.matWorld_);
-}
+	return Transform(Vector3{0, 0, 0}, worldTransform_.matWorld_); }
+
+float Enemy::GetRadius() { return 1.0f; }
 
 void Enemy::Update() {
 	// デスフラグの立った弾を削除

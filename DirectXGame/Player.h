@@ -5,11 +5,12 @@
 #include "WorldTransform.h"
 #include "MT3.h"
 #include <list>
+#include "Collider.h"
 
 /// <summary>
 /// 自キャラ
 /// </summary>
-class Player {
+class Player : public Collider{
 public:
 	/// <summary>
 	/// デストラクタ
@@ -23,14 +24,15 @@ public:
 	/// <param name="textureHandle">テクスチャハンドル</param>
 	void Initialize(Model* model, uint32_t textureHandle);
 	// ワールド座標を取得
-	Vector3 GetWorldPosition();
+	Vector3 GetWorldPosition() override;
+	float GetRadius() override;
 
 	/// <summary>
 	/// 更新
 	/// </summary>
 	void Update();
 	//衝突を検出したら呼び出しされるコールバック関数
-	void onCollision();
+	void onCollision() override;
 	// 弾リストを取得
 	const std::list<PlayerBullet*>& GetBullet() const { return bullets_; }
 

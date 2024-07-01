@@ -22,6 +22,8 @@ Vector3 Player::GetWorldPosition() {
 	return Transform(Vector3{0, 0, 0}, worldTransform_.matWorld_); 
 }
 
+float Player::GetRadius() { return 1.0f; }
+
 void Player::Update() {
 	//デスフラグの立った弾を削除
 	bullets_.remove_if([](PlayerBullet* bullet) {

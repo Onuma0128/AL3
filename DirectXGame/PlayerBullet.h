@@ -4,21 +4,23 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "cassert"
+#include "Collider.h"
 
 /// <summary>
 /// 自キャラの弾
 /// </summary>
-class PlayerBullet {
+class PlayerBullet : public Collider{
 public:
 	/// 初期化
 	void Initalize(Model* model, const Vector3& position, const Vector3& velocity);
 	// ワールド座標を取得
-	Vector3 GetWorldPosition();
+	Vector3 GetWorldPosition() override;
+	float GetRadius() override;
 
 	/// 更新
 	void Update();
 	// 衝突を検出したら呼び出しされるコールバック関数
-	void onCollision();
+	void onCollision() override;
 	bool IsDead() const { return isDead_; }
 
 	/// 描画

@@ -4,6 +4,7 @@
 #include "WorldTransform.h"
 #include <list>
 #include "EnemyBullet.h"
+#include "Collider.h"
 
 // 自機クラスの前方宣言
 class Player;
@@ -12,7 +13,7 @@ class Player;
 /// 敵
 /// </summary>
 
-class Enemy {
+class Enemy : public Collider{
 public:
 	/// <summary>
 	/// デストラクタ
@@ -27,7 +28,8 @@ public:
 	void Initialize(Model* model, uint32_t textureHandle);
 	void SetPlayer(Player* player) { player_ = player; }
 	// ワールド座標を取得
-	Vector3 GetWorldPosition();
+	Vector3 GetWorldPosition() override;
+	float GetRadius() override;
 
 	/// <summary>
 	/// 更新
@@ -36,7 +38,7 @@ public:
 	void Phase_Approach(Vector3& move);
 	void Phase_Leave(Vector3& move);
 	// 衝突を検出したら呼び出しされるコールバック関数
-	void onCollision();
+	void onCollision() override;
 	// 弾リストを取得
 	const std::list<EnemyBullet*>& GetBullet() const { return bullets_; }
 
