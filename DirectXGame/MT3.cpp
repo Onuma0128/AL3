@@ -1,7 +1,7 @@
 #include "MT3.h"
+#include <algorithm>
 #include <cassert>
 #include <iostream>
-#include <algorithm>
 
 Vector3 Add(const Vector3& v1, const Vector3& v2) {
 	Vector3 result{};
@@ -11,7 +11,7 @@ Vector3 Add(const Vector3& v1, const Vector3& v2) {
 	return result;
 }
 
-Vector3 Subtract(const Vector3& v1, const Vector3& v2) { 
+Vector3 Subtract(const Vector3& v1, const Vector3& v2) {
 	Vector3 result{};
 	result.x = v1.x - v2.x;
 	result.y = v1.y - v2.y;
@@ -33,6 +33,12 @@ float Length(const Vector3& v) {
 	return result;
 }
 
+float Dot(const Vector3& v1, const Vector3& v2) {
+	float result{};
+	result = (v1.x * v2.x) + (v1.y * v2.y) + (v1.z * v2.z);
+	return result;
+}
+
 Vector3 Normalize(const Vector3& v) {
 	Vector3 result{};
 	float Length{};
@@ -42,6 +48,14 @@ Vector3 Normalize(const Vector3& v) {
 		result.y = v.y / Length;
 		result.z = v.z / Length;
 	}
+	return result;
+}
+
+Vector3 Cross(const Vector3& v1, const Vector3& v2) {
+	Vector3 result{};
+	result.x = v1.y * v2.z - v1.z * v2.y;
+	result.y = v1.z * v2.x - v1.x * v2.z;
+	result.z = v1.x * v2.y - v1.y * v2.x;
 	return result;
 }
 
@@ -136,7 +150,7 @@ Matrix4x4 Inverse(const Matrix4x4& m) {
 }
 
 Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix) {
-	Vector3 result;
+	Vector3 result{};
 	result.x = vector.x * matrix.m[0][0] + vector.y * matrix.m[1][0] + vector.z * matrix.m[2][0] + 1.0f * matrix.m[3][0];
 	result.y = vector.x * matrix.m[0][1] + vector.y * matrix.m[1][1] + vector.z * matrix.m[2][1] + 1.0f * matrix.m[3][1];
 	result.z = vector.x * matrix.m[0][2] + vector.y * matrix.m[1][2] + vector.z * matrix.m[2][2] + 1.0f * matrix.m[3][2];
@@ -148,7 +162,7 @@ Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix) {
 	return result;
 }
 
-Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m) { 
+Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m) {
 	Vector3 result{
 	    v.x * m.m[0][0] + v.y * m.m[1][0] + v.z * m.m[2][0],
 	    v.x * m.m[0][1] + v.y * m.m[1][1] + v.z * m.m[2][1],
@@ -176,7 +190,7 @@ Matrix4x4 MakeAfineMatrix(const Vector3& scale, const Vector3& rotate, const Vec
 	return result;
 }
 
-float Clamp(float& t, float min, float max) { 
+float Clamp(float& t, float min, float max) {
 	if (t < min) {
 		t = min;
 	}
@@ -186,7 +200,7 @@ float Clamp(float& t, float min, float max) {
 	return t;
 }
 
-Vector3 CatmullRomInterpolation(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Vector3& p3, float t) { 
+Vector3 CatmullRomInterpolation(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Vector3& p3, float t) {
 	const float s = 0.5f;
 
 	float t2 = t * t;
@@ -234,9 +248,8 @@ Vector3 CatmullRomPosition(const std::vector<Vector3>& points, float t) {
 	return CatmullRomInterpolation(p0, p1, p2, p3, t_2);
 }
 
-bool circleCollision(Vector3 v1, Vector3 v2, float radiusV1, float radiusV2) { 
-	if ((v2.x - v1.x) * (v2.x - v1.x) + (v2.y - v1.y) * (v2.y - v1.y) + (v2.z - v1.z) * (v2.z - v1.z) <= 
-		(radiusV1 + radiusV2) * (radiusV1 + radiusV2)) {
+bool circleCollision(Vector3 v1, Vector3 v2, float radiusV1, float radiusV2) {
+	if ((v2.x - v1.x) * (v2.x - v1.x) + (v2.y - v1.y) * (v2.y - v1.y) + (v2.z - v1.z) * (v2.z - v1.z) <= (radiusV1 + radiusV2) * (radiusV1 + radiusV2)) {
 		return true;
 	} else {
 		return false;
@@ -255,5 +268,15 @@ Matrix4x4 MakeRotateYMatrix(float radian) {
 
 Matrix4x4 MakeRotateZMatrix(float radian) {
 	Matrix4x4 result{std::cos(radian), std::sin(radian), 0, 0, std::sin(-radian), std::cos(radian), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+	return result;
+}
+
+Matrix4x4 LookAt(const Vector3& eye, const Vector3& target, const Vector3& up) {
+	Vector3 zaxis = Normalize(Subtract(target, eye)); // forward
+	Vector3 xaxis = Normalize(Cross(up, zaxis));      // right
+	Vector3 yaxis = Cross(zaxis, xaxis);              // up
+
+	Matrix4x4 result = {xaxis.x, yaxis.x, zaxis.x, 0, xaxis.y, yaxis.y, zaxis.y, 0, xaxis.z, yaxis.z, zaxis.z, 0, -Dot(xaxis, eye), -Dot(yaxis, eye), -Dot(zaxis, eye), 1};
+
 	return result;
 }

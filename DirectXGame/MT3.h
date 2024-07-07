@@ -13,8 +13,12 @@ Vector3 Subtract(const Vector3& v1, const Vector3& v2);
 Vector3 Multiply(float scalar, const Vector3& v);
 // 長さ
 float Length(const Vector3& v);
+// 内積
+float Dot(const Vector3& v1, const Vector3& v2);
 // 正規化
 Vector3 Normalize(const Vector3& v);
+// クロス積
+Vector3 Cross(const Vector3& v1, const Vector3& v2);
 // 座標変換
 Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix);
 // 1.x軸の回転行列
@@ -28,16 +32,18 @@ Matrix4x4 MakeRotateZMatrix(float radian);
 Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2);
 // 逆行列
 Matrix4x4 Inverse(const Matrix4x4& m);
-//ベクトル変換
+// ベクトル変換
 Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
 // 3次元アフィン変換
 Matrix4x4 MakeAfineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
 
-//クランプ関数
+// クランプ関数
 float Clamp(float& t, float min, float max);
-    //スプライン曲線
+// スプライン曲線
 Vector3 CatmullRomInterpolation(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Vector3& p3, float t);
 Vector3 CatmullRomPosition(const std::vector<Vector3>& points, float t);
 
-//円の衝突判定
+// 円の衝突判定
 bool circleCollision(Vector3 v1, Vector3 v2, float radiusV1, float radiusV2);
+// カメラの注視点
+Matrix4x4 LookAt(const Vector3& eye, const Vector3& target, const Vector3& up);

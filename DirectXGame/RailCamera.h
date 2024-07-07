@@ -1,6 +1,6 @@
 #pragma once
-#include "WorldTransform.h"
 #include "ViewProjection.h"
+#include "WorldTransform.h"
 
 class RailCamera {
 public:
@@ -10,6 +10,7 @@ public:
 	void Initialize();
 	const WorldTransform& GetWorldTransform() { return worldTransform_; }
 	const ViewProjection& GetViewProjection() { return viewProjection_; }
+	void SetControlPoints(const std::vector<Vector3>& points);
 
 	/// <summary>
 	/// 毎フレーム処理
@@ -17,8 +18,10 @@ public:
 	void Update();
 
 private:
-	//ワールド変換データ
+	// ワールド変換データ
 	WorldTransform worldTransform_;
-	//ビュープロジェクション
+	// ビュープロジェクション
 	ViewProjection viewProjection_;
+	std::vector<Vector3> controlPoints_;
+	float t_;
 };
