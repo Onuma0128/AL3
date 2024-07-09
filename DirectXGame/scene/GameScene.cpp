@@ -3,6 +3,7 @@
 #include "TextureManager.h"
 #include <fstream>
 #include <cassert>
+#include "imgui.h"
 
 GameScene::GameScene() {}
 
@@ -198,6 +199,7 @@ void GameScene::Update() {
 	for (EnemyBullet* bullet : enemyBullets_) {
 		bullet->Update();
 	}
+	player_->SetEnemy(enemys_);
 }
 
 void GameScene::CheckAllCollisions() {

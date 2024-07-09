@@ -26,7 +26,7 @@ Vector3 Enemy::GetWorldPosition() {
 
 void Enemy::Update() {
 	// 敵の移動ベクトル
-	Vector3 move_ = {0, 0, -0.01f};
+	Vector3 move_ = {0, 0, -0.05f};
 	//移動処理
 	switch (phase_) { 
 	case Phase::Approach:

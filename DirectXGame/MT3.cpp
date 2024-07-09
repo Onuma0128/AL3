@@ -55,6 +55,26 @@ Vector3 Normalize(const Vector3& v) {
 	return result;
 }
 
+Matrix4x4 Add(const Matrix4x4& m1, const Matrix4x4& m2) {
+	Matrix4x4 result{};
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			result.m[i][j] = m1.m[i][j] + m2.m[i][j];
+		}
+	}
+	return result;
+}
+
+Matrix4x4 Subtract(const Matrix4x4& m1, const Matrix4x4& m2) {
+	Matrix4x4 result{};
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			result.m[i][j] = m1.m[i][j] - m2.m[i][j];
+		}
+	}
+	return result;
+}
+
 Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2) {
 	Matrix4x4 result{};
 	result.m[0][0] = m1.m[0][0] * m2.m[0][0] + m1.m[0][1] * m2.m[1][0] + m1.m[0][2] * m2.m[2][0] + m1.m[0][3] * m2.m[3][0];
@@ -235,3 +255,22 @@ Matrix4x4 MakeTranslateMatrix(const Vector3& translate) {
 	};
 	return m3;
 }
+
+bool CheckCollisionCircleCircle(const Vector3& center1, float radius1,const Vector3& center2, float radius2) {
+	float dx = center1.x - center2.x;
+	float dy = center1.y - center2.y;
+	float distanceSquared = dx * dx + dy * dy;
+	float radiiSum = radius1 + radius2;
+	float radiiSumSquared = radiiSum * radiiSum;
+
+	return distanceSquared <= radiiSumSquared;
+}
+
+Vector3 operator+(const Vector3& v1, const Vector3& v2) { return Add(v1, v2); }
+Vector3 operator-(const Vector3& v1, const Vector3& v2) { return Subtract(v1, v2); }
+Vector3 operator*(float s, const Vector3& v) { return Multiply(s, v); }
+Vector3 operator*(const Vector3& v, float s) { return s * v; }
+
+Matrix4x4 operator+(const Matrix4x4& m1, const Matrix4x4& m2) { return Add(m1, m2); }
+Matrix4x4 operator-(const Matrix4x4& m1, const Matrix4x4& m2) { return Subtract(m1, m2); }
+Matrix4x4 operator*(const Matrix4x4& m1, const Matrix4x4& m2) { return Multiply(m1, m2); }

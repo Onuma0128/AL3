@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "ImGuiManager.h"
 #include <cassert>
+#include "Enemy.h"
 
 Player::~Player() { 
 	for (PlayerBullet* bullet : bullets_) {
@@ -24,6 +25,8 @@ void Player::Initialize(Model* model, uint32_t textureHandle, Vector3 playerPos)
 	uint32_t textureReticle = TextureManager::Load("2dReticle.png");
 	//スプライト生成
 	sprite2DReticle_ = Sprite::Create(textureReticle, Vector2{0.0f, 0.0f}, Vector4{0.0f, 0.0f, 0.0f, 1.0f}, Vector2{0.5f, 0.5f});
+	time_ = 1.0f;
+	isTargetingEnemy_ = false;
 }
 
 Vector3 Player::GetWorldPosition() { 
@@ -93,12 +96,6 @@ void Player::Update(const ViewProjection& viewProjection) {
 	// 行列を定数バッファに転送
 	worldTransform_.UpdateMatrix();
 
-	// キャラクターの攻撃処理
-	Attack();
-	// 弾更新
-	for (PlayerBullet* bullet : bullets_) {
-		bullet->Update();
-	}
 	// 自機のワールド座標から3Dレティクルのワールド座標を計算
 	const float kDistancePlayerTo3DReticle = 50.0f;
 	// 自機から3Dレティクルへのオフセット(Z+向き)
@@ -110,9 +107,12 @@ void Player::Update(const ViewProjection& viewProjection) {
 	// ベクトルの長さを整える
 	offset = Multiply(kDistancePlayerTo3DReticle, Normalize(offset));
 	// 3Dレティクルの座標を設定
-	worldTransform3DReticle_.translation_ = Add(worldTransform_.translation_, offset);
-	worldTransform3DReticle_.matWorld_ = MakeAfineMatrix(worldTransform3DReticle_.scale_, worldTransform3DReticle_.rotation_, worldTransform3DReticle_.translation_);
+	worldTransform3DReticle_.translation_ = Lerp(old3DReticle_, Add(worldTransform_.translation_, offset), time_);
 	worldTransform3DReticle_.UpdateMatrix();
+	time_ += 0.01f;
+	if (time_ >= 1.0f) {
+		time_ = 1.0f;
+	}
 
 	// 3Dレティクルのワールド座標から2Dレティクルのスクリーン座標を計算
 	Vector3 positionReticle_ = Transform(Vector3(0, 0, 0), worldTransform3DReticle_.matWorld_);
@@ -125,13 +125,57 @@ void Player::Update(const ViewProjection& viewProjection) {
 	//スプライトのレティクルに座標を設定
 	sprite2DReticle_->SetPosition(Vector2(positionReticle_.x, positionReticle_.y));
 
+	//敵からレティクルが離れた時の処理
+	bool wasTargetingEnemy = isTargetingEnemy_;
+	isTargetingEnemy_ = false;
 
-	ImGui::Begin("Reticle");
-	ImGui::SliderFloat3("2DReticle.position", &positionReticle_.x,-50,50);
-	ImGui::End();
+	for (Enemy* enemy : enemys_) {
+		//敵のワールド座標を取得
+		Vector3 positionEnemy = enemy->GetWorldPosition();
+		//敵をスクリーン座標に変換
+		positionEnemy = Transform(positionEnemy, matViewProjectionViewport);
+		//スクリーン座標の衝突判定
+		bool isColliding = CheckCollisionCircleCircle(positionReticle_, 16, positionEnemy, 16);
+		if (isColliding && time_ >= 1.0f) {
+			isTargetingEnemy_ = true;
+
+			sprite2DReticle_->SetPosition(Vector2(positionEnemy.x, positionEnemy.y));
+
+			worldTransform3DReticle_.translation_ = enemy->GetWorldPosition();
+			worldTransform3DReticle_.UpdateMatrix();
+			old3DReticle_ = worldTransform3DReticle_.translation_;
+		}
+
+		ImGui::Begin("Text");
+		ImGui::Text("%f",time_);
+		ImGui::End();
+	}
+
+	//敵からレティクルが離れた時にtime_を初期化
+	if (!isTargetingEnemy_ && wasTargetingEnemy) {
+		time_ = 0.0f;
+	}
+
+	//衝突していれば色を変える
+	if (isTargetingEnemy_) {
+		sprite2DReticle_->SetColor(Vector4{1.0f, 0.0f, 0.0f, 1.0f});
+	} else {
+		sprite2DReticle_->SetColor(Vector4{0.0f, 0.0f, 0.0f, 1.0f});
+	}
+
+	// キャラクターの攻撃処理
+	Attack();
+	// 弾更新
+	for (PlayerBullet* bullet : bullets_) {
+		bullet->Update();
+	}
 }
 
 void Player::onCollision() {}
+
+Vector3 Player::Lerp(const Vector3& start, const Vector3& end, float t) {
+    return (1.0f - t) * start + t * end;
+}
 
 void Player::Draw(ViewProjection& viewProjection) {
 	// 3Dモデルを描画
@@ -140,8 +184,6 @@ void Player::Draw(ViewProjection& viewProjection) {
 	for (PlayerBullet* bullet : bullets_) {
 		bullet->Draw(viewProjection);
 	}
-	//3Dレティクルを描画
-	model_->Draw(worldTransform3DReticle_, viewProjection);
 }
 
 void Player::DrawUI() { 

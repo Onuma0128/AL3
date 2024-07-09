@@ -8,6 +8,8 @@
 #include <Sprite.h>
 #include <WinApp.h>
 
+class Enemy;
+
 /// <summary>
 /// 自キャラ
 /// </summary>
@@ -26,6 +28,7 @@ public:
 	void Initialize(Model* model, uint32_t textureHandle,Vector3 playerPos);
 	// ワールド座標を取得
 	Vector3 GetWorldPosition();
+	void SetEnemy(std::list<Enemy*> enemy) { enemys_ = enemy; }
 	/// <summary>
 	/// 親となるワールドトランスフォームをセット
 	/// </summary>
@@ -37,6 +40,8 @@ public:
 	void Update(const ViewProjection& viewProjection);
 	//衝突を検出したら呼び出しされるコールバック関数
 	void onCollision();
+	//ラープ
+	Vector3 Lerp(const Vector3& start, const Vector3& end, float t);
 	// 弾リストを取得
 	const std::list<PlayerBullet*>& GetBullet() const { return bullets_; }
 
@@ -78,7 +83,13 @@ private:
 	std::list<PlayerBullet*> bullets_;
 	//3Dレティクル用ワールドトランスフォーム
 	WorldTransform worldTransform3DReticle_;
+	//敵をターゲットしているかどうか
+	bool isTargetingEnemy_ = false;
 	//2Dレティクル用スプライト
 	Sprite* sprite2DReticle_ = nullptr;
-	float t = 0;
+
+	Vector3 old3DReticle_;
+	float time_;
+
+	std::list<Enemy*> enemys_;
 };

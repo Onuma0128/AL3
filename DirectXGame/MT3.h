@@ -31,6 +31,11 @@ Matrix4x4 MakeRotateZMatrix(float radian);
 //移動行列
 Matrix4x4 MakeTranslateMatrix(const Vector3& translate);
 
+
+// 行列の足し算
+Matrix4x4 Add(const Matrix4x4& m1, const Matrix4x4& m2);
+// 行列の引き算
+Matrix4x4 Subtract(const Matrix4x4& m1, const Matrix4x4& m2);
 // 行列の積
 Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2);
 // 逆行列
@@ -44,3 +49,15 @@ Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, f
 
 //円の衝突判定
 bool circleCollision(Vector3 v1, Vector3 v2, float radiusV1, float radiusV2);
+
+bool CheckCollisionCircleCircle(const Vector3& center1, float radius1, const Vector3& center2, float radius2);
+
+// 二項演算子
+Vector3 operator+(const Vector3& v1, const Vector3& v2);
+Vector3 operator-(const Vector3& v1, const Vector3& v2);
+Vector3 operator*(float s, const Vector3& v);
+Vector3 operator*(const Vector3& v, float s);
+
+Matrix4x4 operator+(const Matrix4x4& m1, const Matrix4x4& m2);
+Matrix4x4 operator-(const Matrix4x4& m1, const Matrix4x4& m2);
+Matrix4x4 operator*(const Matrix4x4& m1, const Matrix4x4& m2);
