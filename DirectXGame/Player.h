@@ -66,6 +66,11 @@ public:
 	/// </summary>
 	void Attack();
 
+	/// <summary>
+	/// ターゲット攻撃
+	/// </summary>
+	void TargetAttack();
+
 private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;
@@ -77,8 +82,6 @@ private:
 	Input* input_ = nullptr;
 	// ImGuiで値を入力する変数
 	float inputFloat3[3];
-	// 弾
-	PlayerBullet* bullet_ = nullptr;
 	//複数弾
 	std::list<PlayerBullet*> bullets_;
 	//3Dレティクル用ワールドトランスフォーム

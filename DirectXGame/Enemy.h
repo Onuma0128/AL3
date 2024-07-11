@@ -3,7 +3,9 @@
 #include "Model.h"
 #include "WorldTransform.h"
 #include <list>
+#include <Sprite.h>
 #include "EnemyBullet.h"
+#include <WinApp.h>
 
 //GameSceneの前方宣言
 class GameScene;
@@ -37,13 +39,16 @@ public:
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	void Update(const ViewProjection& viewProjection);
 	void Phase_Approach(Vector3& move);
 	void Phase_Leave(Vector3& move);
 	// 衝突を検出したら呼び出しされるコールバック関数
 	void onCollision();
 	// 弾リストを取得
 	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
+
+	void SetIsTargetingEnemy(bool isTargetingEnemy) { isTargetingEnemy_ = isTargetingEnemy; }
+	bool GetIsTargetingEnemy();
 
 	/// <summary>
 	/// 弾発射
@@ -55,6 +60,8 @@ public:
 	/// </summary>
 	/// <param name="viewProjection">ビュープロジェクション(参照渡し)</param>
 	void Draw(ViewProjection& viewProjection);
+
+	void DrawUI();
 
 public:
 	//static const int kFireInterval = 60;
@@ -78,4 +85,8 @@ private:
 	GameScene* gameScene_ = nullptr;
 	// デスフラグ
 	bool isDead_ = false;
+	//2Dレティクル
+	Sprite* spriteTargetReticle_ = nullptr;
+	bool isTargetingEnemy_;
+
 };

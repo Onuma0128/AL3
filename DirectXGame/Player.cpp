@@ -138,6 +138,7 @@ void Player::Update(const ViewProjection& viewProjection) {
 		bool isColliding = CheckCollisionCircleCircle(positionReticle_, 16, positionEnemy, 16);
 		if (isColliding && time_ >= 1.0f) {
 			isTargetingEnemy_ = true;
+			enemy->SetIsTargetingEnemy(isTargetingEnemy_);
 
 			sprite2DReticle_->SetPosition(Vector2(positionEnemy.x, positionEnemy.y));
 
@@ -145,10 +146,6 @@ void Player::Update(const ViewProjection& viewProjection) {
 			worldTransform3DReticle_.UpdateMatrix();
 			old3DReticle_ = worldTransform3DReticle_.translation_;
 		}
-
-		ImGui::Begin("Text");
-		ImGui::Text("%f",time_);
-		ImGui::End();
 	}
 
 	//敵からレティクルが離れた時にtime_を初期化
@@ -165,6 +162,8 @@ void Player::Update(const ViewProjection& viewProjection) {
 
 	// キャラクターの攻撃処理
 	Attack();
+	TargetAttack();
+
 	// 弾更新
 	for (PlayerBullet* bullet : bullets_) {
 		bullet->Update();
@@ -187,7 +186,7 @@ void Player::Draw(ViewProjection& viewProjection) {
 }
 
 void Player::DrawUI() { 
-	sprite2DReticle_->Draw(); 
+	sprite2DReticle_->Draw();
 }
 
 void Player::Rotate() {
@@ -219,5 +218,28 @@ void Player::Attack() {
 
 		// 弾を登録する
 		bullets_.push_back(newBullet);
+	}
+}
+
+void Player::TargetAttack() {
+	if (input_->TriggerKey(DIK_SPACE)) {
+		for (Enemy* enemy : enemys_) {
+			if (enemy->GetIsTargetingEnemy()) {
+				// 弾の速度
+				const float kBulletSpeed = 1.0f;
+				Vector3 velocity(0, 0, kBulletSpeed);
+				// 速度ベクトルを自機の向きに合わせて回転させる
+				velocity = Subtract(enemy->GetWorldPosition(), worldTransform_.translation_);
+				velocity = Multiply(kBulletSpeed, Normalize(velocity));
+
+				// 弾を生成し、初期化
+				PlayerBullet* newBullet = new PlayerBullet();
+				newBullet->SetParent(worldTransform_.parent_);
+				newBullet->Initalize(model_, worldTransform_.translation_, velocity);
+
+				// 弾を登録する
+				bullets_.push_back(newBullet);
+			}
+		}
 	}
 }

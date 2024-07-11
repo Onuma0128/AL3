@@ -189,16 +189,16 @@ void GameScene::Update() {
 		return false;
 	});
 	for (Enemy* enemy : enemys_) {
-		enemy->Update();
+		enemy->Update(railCamera_->GetViewProjection());
 	}
 	Timer_--;
 	if (Timer_ < 0) {
 		Fire();
 		Timer_ = kFireInterval;
 	}
-	for (EnemyBullet* bullet : enemyBullets_) {
+	/*for (EnemyBullet* bullet : enemyBullets_) {
 		bullet->Update();
-	}
+	}*/
 	player_->SetEnemy(enemys_);
 }
 
@@ -326,6 +326,9 @@ void GameScene::Draw() {
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
 	player_->DrawUI();
+	for (Enemy* enemy : enemys_) {
+		enemy->DrawUI();
+	}
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
