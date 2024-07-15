@@ -5,10 +5,7 @@
 
 GameScene::GameScene() {}
 
-GameScene::~GameScene() {
-	delete model_;
-	delete player_;
-}
+GameScene::~GameScene() {}
 
 void GameScene::Initialize() {
 
@@ -18,13 +15,13 @@ void GameScene::Initialize() {
 	// ファイル名を指定してテクスチャを読み込む
 	textureHandle_ = TextureManager::Load("uvChecker.png");
 	// 3Dモデルデータの生成
-	model_ = Model::Create();
+	model_.reset(Model::Create());
 	// ビュープロジェクションの初期化
 	viewProjection_.Initialize();
 	// 自キャラの生成
-	player_ = new Player();
+	player_ = std::make_unique<Player>();
 	// 自キャラの初期化
-	player_->Initialize(model_, textureHandle_);
+	player_->Initialize(model_.get(), textureHandle_);
 }
 
 void GameScene::Update() {

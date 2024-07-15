@@ -26,10 +26,13 @@ void Player::Update() {
 	}
 	//押した方向で移動ベクトルを変更(上下)
 	if (input_->PushKey(DIK_UP)) {
-		move.y -= kCharacterSpeed;
-	} else if (input_->PushKey(DIK_DOWN)) {
 		move.y += kCharacterSpeed;
+	} else if (input_->PushKey(DIK_DOWN)) {
+		move.y -= kCharacterSpeed;
 	}
+
+	worldTransform_.translation_ = worldTransform_.translation_ + move;
+	worldTransform_.UpdateMatrix();
 }
 
 void Player::Draw(ViewProjection& viewProjection) {

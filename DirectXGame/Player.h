@@ -2,6 +2,7 @@
 #include "Model.h"
 #include "WorldTransform.h"
 #include "Input.h"
+#include "MT3.h"
 
 /// <summary>
 /// 自キャラ
