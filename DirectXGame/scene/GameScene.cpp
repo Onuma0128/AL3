@@ -50,10 +50,8 @@ void GameScene::Initialize() {
 	//レールカメラの生成
 	railCamera_ = new RailCamera(); 
 	railCamera_->Initialize();
-	// 自キャラとレールカメラの親子関係を結ぶ
-	player_->SetParent(&railCamera_->GetWorldTransform());
 	// 自キャラの初期化
-	Vector3 playerPosition(0, 0, 50);
+	Vector3 playerPosition(0, 0, 0);
 	player_->Initialize(model_, textureHandle_, playerPosition);
 
 	LoadEnemyPopData();
@@ -160,14 +158,15 @@ void GameScene::Update() {
 	CheckAllCollisions();
 	//レールカメラ
 	railCamera_->Update();
-	viewProjection_.matView = railCamera_->GetViewProjection().matView;
+	//viewProjection_.matView = railCamera_->GetViewProjection().matView;
+	viewProjection_.matView = Inverse(player_->GetWorldTransform().matWorld_);
 	viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
 	viewProjection_.TransferMatrix();
 
 	// 天球の更新
 	skydome_->Update();
 	// 自キャラの更新
-	player_->Update(railCamera_->GetViewProjection());
+	player_->Update(viewProjection_);
 
 	UpdateEnemyPopCommands();
 	// デスフラグの立った敵を削除

@@ -24,6 +24,8 @@ public:
 	/// <param name="model">モデル</param>
 	/// <param name="textureHandle">テクスチャハンドル</param>
 	void Initialize(Model* model, uint32_t textureHandle,Vector3 playerPos);
+
+	const WorldTransform& GetWorldTransform() { return worldTransform_; }
 	// ワールド座標を取得
 	Vector3 GetWorldPosition();
 	/// <summary>
