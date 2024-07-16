@@ -20,18 +20,12 @@ void GameScene::Initialize() {
 	viewProjection_.Initialize();
 	// 自キャラの生成
 	player_ = std::make_unique<Player>();
-	player_->Initialize(model_, textureHandle_);
-	//天球
-	skydome_ = std::make_unique<Skydome>();
-	modelSkydome_.reset(Model::CreateFromOBJ("skydome", true));
-	skydome_->Initialize(modelSkydome_);
+	player_->Initialize(model_.get(), textureHandle_);
 }
 
 void GameScene::Update() {
 	// 自キャラの更新
 	player_->Update();
-	//天球
-	skydome_->Update();
 }
 
 void GameScene::Draw() {
@@ -61,8 +55,6 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 	
-	// 天球
-	skydome_->Draw(viewProjection_);
 	// 自キャラ
 	player_->Draw(viewProjection_);
 

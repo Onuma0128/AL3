@@ -14,7 +14,7 @@ public:
 	/// </summary>
 	/// <param name="model">モデル</param>
 	/// <param name="textureHandle">テクスチャハンドル</param>
-	void Initialize(std::unique_ptr<Model>& model, uint32_t textureHandle);
+	void Initialize(Model* model, uint32_t textureHandle);
 
 	/// <summary>
 	/// 更新
@@ -31,7 +31,7 @@ private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;
 	// モデル
-	std::unique_ptr<Model> model_ = nullptr;
+	Model* model_ = nullptr;
 	// テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
 	//キーボード入力
