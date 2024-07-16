@@ -5,6 +5,7 @@
 #include "Input.h"
 #include "Model.h"
 #include "Player.h"
+#include "Skydome.h"
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
@@ -53,6 +54,10 @@ private: // メンバ変数
 	std::unique_ptr<Model> model_ = nullptr;
 	// 自キャラ
 	std::unique_ptr<Player> player_ = nullptr;
+	// 天球
+	std::unique_ptr<Model> modelSkydome_ = nullptr;
+	std::unique_ptr<Skydome> skydome_ = nullptr;
+
 
 	/// <summary>
 	/// ゲームシーン用

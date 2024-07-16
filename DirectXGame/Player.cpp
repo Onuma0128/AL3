@@ -1,10 +1,10 @@
 #include "Player.h"
 #include <cassert>
 
-void Player::Initialize(Model* model, uint32_t textureHandle) {
+void Player::Initialize(std::unique_ptr<Model>& model, uint32_t textureHandle) {
 	// NULLポインタチェック
 	assert(model);
-	model_ = model;
+	model_.reset(model.get());
 	textureHandle_ = textureHandle;
 	worldTransform_.Initialize();
 	//シングルトンインスタンスを取得する
