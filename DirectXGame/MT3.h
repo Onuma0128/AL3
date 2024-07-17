@@ -3,6 +3,8 @@
 #include <Vector3.h>
 #include <cmath>
 
+const float pi = 3.14159265358979f;
+
 // 加算
 Vector3 Add(const Vector3& v1, const Vector3& v2);
 // 減算
@@ -50,6 +52,9 @@ Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, f
 bool circleCollision(Vector3 v1, Vector3 v2, float radiusV1, float radiusV2);
 
 bool CheckCollisionCircleCircle(const Vector3& center1, float radius1, const Vector3& center2, float radius2);
+
+// 最短角度補完
+float LerpShortAngle(float a, float b, float t);
 
 // 二項演算子
 Vector3 operator+(const Vector3& v1, const Vector3& v2);

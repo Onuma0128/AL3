@@ -18,23 +18,36 @@ void Player::Update() {
 	const float kCharacterSpeed = 0.3f;
 	XINPUT_STATE joystate;
 	if (Input::GetInstance()->GetJoystickState(0, joystate)) {
+		const float threshold = 0.7f;
+		bool isMoving = false;
 		// キャラクターの移動ベクトル
 		Vector3 move = {
-		    .x = (float)joystate.Gamepad.sThumbLX / SHRT_MAX * kCharacterSpeed,
+		    .x = (float)joystate.Gamepad.sThumbLX / SHRT_MAX,
 		    .y = 0.0f,
-		    .z = (float)joystate.Gamepad.sThumbLY / SHRT_MAX * kCharacterSpeed,
+		    .z = (float)joystate.Gamepad.sThumbLY / SHRT_MAX,
 		};
-		if (move.x != 0.0f || move.z != 0.0f) {
-			move = Normalize(move) * kCharacterSpeed;
-			// カメラの動きに合わせて自機を回転
-			Matrix4x4 makeCameraRotateMatrix = MakeRotateMatrix(viewProjection_->rotation_);
-			move = Transform(move, makeCameraRotateMatrix);
-
-			// 自機の動きに合わせて回転
-			worldTransform_.rotation_.y = std::atan2(move.x, move.z);
+		if (Length(move) > threshold) {
+			isMoving = true;
+		}
+		move = Normalize(move) * kCharacterSpeed;
+		// カメラの動きに合わせて自機を回転
+		Matrix4x4 makeCameraRotateMatrix = MakeRotateMatrix(viewProjection_->rotation_);
+		move = Transform(move, makeCameraRotateMatrix);
+		if (isMoving) {
 			// 移動処理
 			worldTransform_.translation_ = worldTransform_.translation_ + move;
+			// 自機の動きに合わせて回転
+			newRotetionY = std::atan2(move.x, move.z);
+			// 補完時間の初期化
+			t = 0.3f;
 		}
+	}
+	//最短角度補完
+	worldTransform_.rotation_.y = LerpShortAngle(worldTransform_.rotation_.y, newRotetionY, t);
+
+	t += 0.1f;
+	if (t > 1.0f) {
+		t = 1.0f;
 	}
 
 	worldTransform_.UpdateMatrix();

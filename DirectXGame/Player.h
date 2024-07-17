@@ -37,6 +37,8 @@ private:
 	const ViewProjection* viewProjection_ = nullptr;
 	// ワールド変換データ
 	WorldTransform worldTransform_;
+	float newRotetionY;
+	float t;
 	// モデル
 	Model* model_ = nullptr;
 	// テクスチャハンドル

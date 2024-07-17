@@ -260,6 +260,28 @@ bool CheckCollisionCircleCircle(const Vector3& center1, float radius1, const Vec
 	return distanceSquared <= radiiSumSquared;
 }
 
+float LerpShortAngle(float a, float b, float t) {
+	float diff = b - a;
+
+	// 角度を [-2PI, +2PI] に補正する
+	while (diff > 2 * pi) {
+		diff -= 2 * pi;
+	}
+	while (diff < -2 * pi) {
+		diff += 2 * pi;
+	}
+
+	// 角度を [-PI, +PI] に補正する
+	if (diff > pi) {
+		diff -= 2 * pi;
+	} else if (diff < -pi) {
+		diff += 2 * pi;
+	}
+
+	// 線形補間を行う
+	return a + t * diff;
+}
+
 Vector3 operator+(const Vector3& v1, const Vector3& v2) { return Add(v1, v2); }
 Vector3 operator-(const Vector3& v1, const Vector3& v2) { return Subtract(v1, v2); }
 Vector3 operator*(float s, const Vector3& v) { return Multiply(s, v); }
