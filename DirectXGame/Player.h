@@ -1,5 +1,6 @@
 #pragma once
 #include "Model.h"
+#include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "Input.h"
 #include "MT3.h"
@@ -15,6 +16,9 @@ public:
 	/// <param name="model">モデル</param>
 	/// <param name="textureHandle">テクスチャハンドル</param>
 	void Initialize(Model* model, uint32_t textureHandle);
+	const WorldTransform& GetWorldTransform() { return worldTransform_; }
+	Vector3 GetWorldPosition() { return Transform(Vector3{0, 0, 0}, worldTransform_.matWorld_); }
+	void SetViewProjection(const ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 
 	/// <summary>
 	/// 更新
@@ -28,6 +32,8 @@ public:
 	void Draw(ViewProjection& viewProjection);
 
 private:
+	// カメラのビュープロジェクション
+	const ViewProjection* viewProjection_ = nullptr;
 	// ワールド変換データ
 	WorldTransform worldTransform_;
 	// モデル

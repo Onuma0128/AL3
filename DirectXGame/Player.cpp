@@ -17,18 +17,16 @@ void Player::Update() {
 	// キャラクターの移動ベクトル
 	Vector3 move = {0, 0, 0};
 	// キャラクターの移動速さ
-	const float kCharacterSpeed = 0.2f;
-	// 押した方向で移動ベクトルを変更(左右)
-	if (input_->PushKey(DIK_LEFT)) {
-		move.x -= kCharacterSpeed;
-	} else if (input_->PushKey(DIK_RIGHT)) {
-		move.x += kCharacterSpeed;
-	}
-	//押した方向で移動ベクトルを変更(上下)
-	if (input_->PushKey(DIK_UP)) {
-		move.y += kCharacterSpeed;
-	} else if (input_->PushKey(DIK_DOWN)) {
-		move.y -= kCharacterSpeed;
+	const float kCharacterSpeed = 0.3f;
+	XINPUT_STATE joystate;
+	if (Input::GetInstance()->GetJoystickState(0, joystate)) {
+		move.x = (float)joystate.Gamepad.sThumbLX / SHRT_MAX * kCharacterSpeed;
+		move.y = 0.0f;
+		move.z = (float)joystate.Gamepad.sThumbLY / SHRT_MAX * kCharacterSpeed;
+		move = Normalize(move) * kCharacterSpeed;
+		Matrix4x4 MakeCameraRotateMatrix = MakeRotateMatrix(viewProjection_->rotation_);
+		move = Transform(move, MakeCameraRotateMatrix);
+		worldTransform_.rotation_.y = std::atan2(move.x, move.z);
 	}
 
 	worldTransform_.translation_ = worldTransform_.translation_ + move;

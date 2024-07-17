@@ -31,6 +31,12 @@ void GameScene::Initialize() {
 	groundModel_.reset(Model::CreateFromOBJ("Ground", true));
 	ground_ = std::make_unique<Ground>();
 	ground_->Initialize(groundModel_.get());
+	// 追従カメラ
+	followCamera_ = std::make_unique<FollowCamera>();
+	followCamera_->Initialize();
+	followCamera_->SetTarget(&player_->GetWorldTransform());
+	// 追従カメラのViewProjectionを渡す
+	player_->SetViewProjection(&followCamera_->GetViewProjection());
 }
 
 void GameScene::Update() {
@@ -45,8 +51,13 @@ void GameScene::Update() {
 		debugCamera_->Update();
 		viewProjection_.matView = debugCamera_->GetViewProjection().matView;
 		viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
-		viewProjection_.TransferMatrix();
+	} else {
+		// 追従カメラ
+		followCamera_->Update();
+		viewProjection_.matView = followCamera_->GetViewProjection().matView;
+		viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
 	}
+	viewProjection_.TransferMatrix();
 	// 天球
 	skydome_->Update();
 	// 地面

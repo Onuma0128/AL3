@@ -3,6 +3,7 @@
 #include "Audio.h"
 #include "DirectXCommon.h"
 #include "DebugCamera.h"
+#include "FollowCamera.h"
 #include "Input.h"
 #include "Model.h"
 #include "Player.h"
@@ -53,8 +54,10 @@ private: // メンバ変数
 	// ビュープロジェクション
 	ViewProjection viewProjection_;
 	// デバッグカメラ
-	std::unique_ptr <DebugCamera> debugCamera_ = nullptr;
+	std::unique_ptr<DebugCamera> debugCamera_ = nullptr;
 	bool isDebugCameraActive_ = false;
+	// 追従カメラ
+	std::unique_ptr<FollowCamera> followCamera_ = nullptr;
 	// 自キャラ
 	std::unique_ptr<Model> model_ = nullptr;
 	std::unique_ptr<Player> player_ = nullptr;
