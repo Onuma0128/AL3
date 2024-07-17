@@ -2,6 +2,10 @@
 #include <cassert>
 
 void Player::Initialize(Model* modelBody, Model* modelHead, Model* modelL_arm, Model* modelR_arm) {
+	// シングルトンインスタンスを取得する
+	input_ = Input::GetInstance();
+
+	//モデルの取得
 	modelBody_ = modelBody;
 	modelHead_ = modelHead;
 	modelL_arm_ = modelL_arm;
@@ -16,21 +20,25 @@ void Player::Initialize(Model* modelBody, Model* modelHead, Model* modelL_arm, M
 	worldTransformL_arm_.Initialize();
 	worldTransformR_arm_.Initialize();
 
-	worldTransformBody_.translation_ = {0.0f, 0.5f, 0.0f};
-	worldTransformHead_.translation_ = {0.0f, 2.7f, 0.0f};
-	worldTransformL_arm_.translation_ = {-1.0f, 1.2f, 0.0f};
-	worldTransformR_arm_.translation_ = {1.0f, 1.2f, 0.0f};
+	worldTransformBase_.translation_ = {0.0f, 0.8f, 0.0f};
+	worldTransformBody_.translation_ = {0.0f, 0.0f, 0.0f};
+	worldTransformHead_.translation_ = {0.0f, 2.3f, 0.0f};
+	worldTransformL_arm_.translation_ = {-1.0f, 1.0f, 0.0f};
+	worldTransformR_arm_.translation_ = {1.0f, 1.0f, 0.0f};
 
-	// シングルトンインスタンスを取得する
-	input_ = Input::GetInstance();
+	InitializeFloatingGimmick();
+}
+
+void Player::InitializeFloatingGimmick() {
+	floatingParameter_ = 0.0f;
 }
 
 void Player::SetParent(const WorldTransform* parent) {
 	// 親子関係を結ぶ
 	worldTransformBody_.parent_ = parent;
-	worldTransformHead_.parent_ = parent;
-	worldTransformL_arm_.parent_ = parent;
-	worldTransformR_arm_.parent_ = parent;
+	worldTransformHead_.parent_ = &worldTransformBody_;
+	worldTransformL_arm_.parent_ = &worldTransformBody_;
+	worldTransformR_arm_.parent_ = &worldTransformBody_;
 }
 
 void Player::Update() {
@@ -59,18 +67,20 @@ void Player::Update() {
 			// 移動処理
 			worldTransformBase_.translation_ = worldTransformBase_.translation_ + move;
 			// 自機の動きに合わせて回転
-			newRotetionY = std::atan2(move.x, move.z);
+			newRotetionY_ = std::atan2(move.x, move.z);
 			// 補完時間の初期化
-			t = 0.3f;
+			t_ = 0.3f;
 		}
 	}
 	// 最短角度補完
-	worldTransformBase_.rotation_.y = LerpShortAngle(worldTransformBase_.rotation_.y, newRotetionY, t);
+	worldTransformBase_.rotation_.y = LerpShortAngle(worldTransformBase_.rotation_.y, newRotetionY_, t_);
 
-	t += 0.1f;
-	if (t > 1.0f) {
-		t = 1.0f;
+	t_ += 0.1f;
+	if (t_ > 1.0f) {
+		t_ = 1.0f;
 	}
+
+	UpdateFloatingGimmick();
 
 	worldTransformBase_.UpdateMatrix();
 	worldTransformBody_.UpdateMatrix();
@@ -82,6 +92,23 @@ void Player::Update() {
 	ImGui::Text("translation_.x : %f", worldTransformBase_.translation_.x);
 	ImGui::Text("translation_.z : %f", worldTransformBase_.translation_.z);
 	ImGui::End();
+}
+
+void Player::UpdateFloatingGimmick() {
+	// 浮遊移動のサイクル
+	const uint16_t period = 120;
+	// 1フレームでのパラメータ加算値
+	const float step = 2.0f * pi / period;
+	// パラメータ加算
+	floatingParameter_ += step;
+	floatingParameter_ = std::fmod(floatingParameter_, 2.0f * pi);
+	// 浮遊の振れ幅
+	const float amplitude = 0.2f;
+	const float armAmplitude = 0.4f;
+	// 浮遊を座標に反映
+	worldTransformBody_.translation_.y = std::sin(floatingParameter_) * amplitude;
+	worldTransformL_arm_.rotation_.x = std::sin(floatingParameter_) * armAmplitude;
+	worldTransformR_arm_.rotation_.x = std::sin(floatingParameter_) * armAmplitude;
 }
 
 void Player::Draw(ViewProjection& viewProjection) {
