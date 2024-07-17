@@ -2,10 +2,12 @@
 
 #include "Audio.h"
 #include "DirectXCommon.h"
+#include "DebugCamera.h"
 #include "Input.h"
 #include "Model.h"
 #include "Player.h"
 #include "Skydome.h"
+#include "Ground.h"
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
@@ -50,13 +52,18 @@ private: // メンバ変数
 	uint32_t textureHandle_ = 0;
 	// ビュープロジェクション
 	ViewProjection viewProjection_;
-	// 3Dモデルデータ
-	std::unique_ptr<Model> model_ = nullptr;
+	// デバッグカメラ
+	std::unique_ptr <DebugCamera> debugCamera_ = nullptr;
+	bool isDebugCameraActive_ = false;
 	// 自キャラ
+	std::unique_ptr<Model> model_ = nullptr;
 	std::unique_ptr<Player> player_ = nullptr;
 	// 天球
 	std::unique_ptr<Model> skydomeModel_ = nullptr;
 	std::unique_ptr<Skydome> skydome_ = nullptr;
+	// 地面
+	std::unique_ptr<Model> groundModel_ = nullptr;
+	std::unique_ptr<Ground> ground_ = nullptr;
 
 
 	/// <summary>

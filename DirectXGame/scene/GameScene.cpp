@@ -13,11 +13,13 @@ void GameScene::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 	// ファイル名を指定してテクスチャを読み込む
-	textureHandle_ = TextureManager::Load("uvChecker.png");
+	textureHandle_ = TextureManager::Load("white1x1.png");
 	// 3Dモデルデータの生成
-	model_.reset(Model::Create());
+	model_.reset(Model::CreateFromOBJ("player", true));
 	// ビュープロジェクションの初期化
 	viewProjection_.Initialize();
+	// デバッグカメラ
+	debugCamera_ = std::make_unique<DebugCamera>(1280, 720);
 	// 自キャラの生成
 	player_ = std::make_unique<Player>();
 	player_->Initialize(model_.get(), textureHandle_);
@@ -25,11 +27,30 @@ void GameScene::Initialize() {
 	skydomeModel_.reset(Model::CreateFromOBJ("skydome", true));
 	skydome_ = std::make_unique<Skydome>();
 	skydome_->Initialize(skydomeModel_.get());
+	// 地面
+	groundModel_.reset(Model::CreateFromOBJ("Ground", true));
+	ground_ = std::make_unique<Ground>();
+	ground_->Initialize(groundModel_.get());
 }
 
 void GameScene::Update() {
+	// デバッグカメラ
+#ifdef _DEBUG
+	if (input_->TriggerKey(DIK_SPACE)) {
+		isDebugCameraActive_ = true;
+	}
+#endif
+	// カメラの処理
+	if (isDebugCameraActive_) {
+		debugCamera_->Update();
+		viewProjection_.matView = debugCamera_->GetViewProjection().matView;
+		viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
+		viewProjection_.TransferMatrix();
+	}
 	// 天球
 	skydome_->Update();
+	// 地面
+	ground_->Update();
 	// 自キャラの更新
 	player_->Update();
 }
@@ -61,8 +82,10 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 	
-	//天球
+	// 天球
 	skydome_->Draw(viewProjection_);
+	// 地面
+	ground_->Draw(viewProjection_);
 	// 自キャラ
 	player_->Draw(viewProjection_);
 
