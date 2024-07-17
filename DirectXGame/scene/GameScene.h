@@ -1,14 +1,14 @@
 #pragma once
 
 #include "Audio.h"
-#include "DirectXCommon.h"
 #include "DebugCamera.h"
+#include "DirectXCommon.h"
 #include "FollowCamera.h"
+#include "Ground.h"
 #include "Input.h"
 #include "Model.h"
 #include "Player.h"
 #include "Skydome.h"
-#include "Ground.h"
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
@@ -59,7 +59,10 @@ private: // メンバ変数
 	// 追従カメラ
 	std::unique_ptr<FollowCamera> followCamera_ = nullptr;
 	// 自キャラ
-	std::unique_ptr<Model> model_ = nullptr;
+	std::unique_ptr<Model> modelFighterBody_ = nullptr;
+	std::unique_ptr<Model> modelFighterHead_ = nullptr;
+	std::unique_ptr<Model> modelFighterL_arm_ = nullptr;
+	std::unique_ptr<Model> modelFighterR_arm_ = nullptr;
 	std::unique_ptr<Player> player_ = nullptr;
 	// 天球
 	std::unique_ptr<Model> skydomeModel_ = nullptr;
@@ -67,7 +70,6 @@ private: // メンバ変数
 	// 地面
 	std::unique_ptr<Model> groundModel_ = nullptr;
 	std::unique_ptr<Ground> ground_ = nullptr;
-
 
 	/// <summary>
 	/// ゲームシーン用

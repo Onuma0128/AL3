@@ -1,9 +1,9 @@
 #pragma once
+#include "Input.h"
+#include "MT3.h"
 #include "Model.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
-#include "Input.h"
-#include "MT3.h"
 #include "imgui.h"
 
 /// <summary>
@@ -16,9 +16,10 @@ public:
 	/// </summary>
 	/// <param name="model">モデル</param>
 	/// <param name="textureHandle">テクスチャハンドル</param>
-	void Initialize(Model* model, uint32_t textureHandle);
-	const WorldTransform& GetWorldTransform() { return worldTransform_; }
-	Vector3 GetWorldPosition() { return Transform(Vector3{0, 0, 0}, worldTransform_.matWorld_); }
+	void Initialize(Model* modelBody, Model* modelHead, Model* modelL_arm, Model* modelR_arm);
+	void SetParent(const WorldTransform* parent);
+	const WorldTransform& GetWorldTransform() { return worldTransformBase_; }
+	Vector3 GetWorldPosition() { return Transform(Vector3{0, 0, 0}, worldTransformBase_.matWorld_); }
 	void SetViewProjection(const ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 
 	/// <summary>
@@ -36,13 +37,18 @@ private:
 	// カメラのビュープロジェクション
 	const ViewProjection* viewProjection_ = nullptr;
 	// ワールド変換データ
-	WorldTransform worldTransform_;
+	WorldTransform worldTransformBase_;
+	WorldTransform worldTransformBody_;
+	WorldTransform worldTransformHead_;
+	WorldTransform worldTransformL_arm_;
+	WorldTransform worldTransformR_arm_;
 	float newRotetionY;
 	float t;
 	// モデル
-	Model* model_ = nullptr;
-	// テクスチャハンドル
-	uint32_t textureHandle_ = 0u;
-	//キーボード入力
+	Model* modelBody_ = nullptr;
+	Model* modelHead_ = nullptr;
+	Model* modelL_arm_ = nullptr;
+	Model* modelR_arm_ = nullptr;
+	// キーボード入力
 	Input* input_ = nullptr;
 };

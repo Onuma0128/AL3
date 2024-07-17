@@ -15,14 +15,17 @@ void GameScene::Initialize() {
 	// ファイル名を指定してテクスチャを読み込む
 	textureHandle_ = TextureManager::Load("white1x1.png");
 	// 3Dモデルデータの生成
-	model_.reset(Model::CreateFromOBJ("player", true));
+	modelFighterHead_.reset(Model::CreateFromOBJ("Head", true));
+	modelFighterBody_.reset(Model::CreateFromOBJ("Body", true));
+	modelFighterL_arm_.reset(Model::CreateFromOBJ("L_arm", true));
+	modelFighterR_arm_.reset(Model::CreateFromOBJ("R_arm", true));
 	// ビュープロジェクションの初期化
 	viewProjection_.Initialize();
 	// デバッグカメラ
 	debugCamera_ = std::make_unique<DebugCamera>(1280, 720);
 	// 自キャラの生成
 	player_ = std::make_unique<Player>();
-	player_->Initialize(model_.get(), textureHandle_);
+	player_->Initialize(modelFighterBody_.get(), modelFighterHead_.get(), modelFighterL_arm_.get(), modelFighterR_arm_.get());
 	// 天球
 	skydomeModel_.reset(Model::CreateFromOBJ("skydome", true));
 	skydome_ = std::make_unique<Skydome>();
@@ -93,7 +96,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-	
+
 	// 天球
 	skydome_->Draw(viewProjection_);
 	// 地面
