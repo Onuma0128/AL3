@@ -40,14 +40,21 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
-	// デバッグカメラ
+	// 自キャラ
+	player_->Update();
+	// 天球
+	skydome_->Update();
+	// 地面
+	ground_->Update();
+
+	// カメラの切り替え
 #ifdef _DEBUG
 	if (input_->TriggerKey(DIK_SPACE)) {
 		isDebugCameraActive_ = true;
 	}
 #endif
-	// カメラの処理
 	if (isDebugCameraActive_) {
+		// デバッグカメラ
 		debugCamera_->Update();
 		viewProjection_.matView = debugCamera_->GetViewProjection().matView;
 		viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
@@ -58,12 +65,6 @@ void GameScene::Update() {
 		viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
 	}
 	viewProjection_.TransferMatrix();
-	// 天球
-	skydome_->Update();
-	// 地面
-	ground_->Update();
-	// 自キャラの更新
-	player_->Update();
 }
 
 void GameScene::Draw() {

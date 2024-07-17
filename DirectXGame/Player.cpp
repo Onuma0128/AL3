@@ -7,30 +7,42 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 	model_ = model;
 	textureHandle_ = textureHandle;
 	worldTransform_.Initialize();
-	//シングルトンインスタンスを取得する
+	// シングルトンインスタンスを取得する
 	input_ = Input::GetInstance();
 }
 
 void Player::Update() {
 	// 行列を定数バッファに転送
 	worldTransform_.TransferMatrix();
-	// キャラクターの移動ベクトル
-	Vector3 move = {0, 0, 0};
 	// キャラクターの移動速さ
 	const float kCharacterSpeed = 0.3f;
 	XINPUT_STATE joystate;
 	if (Input::GetInstance()->GetJoystickState(0, joystate)) {
-		move.x = (float)joystate.Gamepad.sThumbLX / SHRT_MAX * kCharacterSpeed;
-		move.y = 0.0f;
-		move.z = (float)joystate.Gamepad.sThumbLY / SHRT_MAX * kCharacterSpeed;
-		move = Normalize(move) * kCharacterSpeed;
-		Matrix4x4 MakeCameraRotateMatrix = MakeRotateMatrix(viewProjection_->rotation_);
-		move = Transform(move, MakeCameraRotateMatrix);
-		worldTransform_.rotation_.y = std::atan2(move.x, move.z);
+		// キャラクターの移動ベクトル
+		Vector3 move = {
+		    .x = (float)joystate.Gamepad.sThumbLX / SHRT_MAX * kCharacterSpeed,
+		    .y = 0.0f,
+		    .z = (float)joystate.Gamepad.sThumbLY / SHRT_MAX * kCharacterSpeed,
+		};
+		if (move.x != 0.0f || move.z != 0.0f) {
+			move = Normalize(move) * kCharacterSpeed;
+			// カメラの動きに合わせて自機を回転
+			Matrix4x4 makeCameraRotateMatrix = MakeRotateMatrix(viewProjection_->rotation_);
+			move = Transform(move, makeCameraRotateMatrix);
+
+			// 自機の動きに合わせて回転
+			worldTransform_.rotation_.y = std::atan2(move.x, move.z);
+			// 移動処理
+			worldTransform_.translation_ = worldTransform_.translation_ + move;
+		}
 	}
 
-	worldTransform_.translation_ = worldTransform_.translation_ + move;
 	worldTransform_.UpdateMatrix();
+
+	ImGui::Begin("player");
+	ImGui::Text("translation_.x : %f", worldTransform_.translation_.x);
+	ImGui::Text("translation_.z : %f", worldTransform_.translation_.z);
+	ImGui::End();
 }
 
 void Player::Draw(ViewProjection& viewProjection) {
