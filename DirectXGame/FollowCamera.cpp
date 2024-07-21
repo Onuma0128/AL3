@@ -14,8 +14,9 @@ void FollowCamera::Update() {
 	if (target_) {
 		Vector3 offset = {0.0f, 2.0f, -20.0f};
 
-		Matrix4x4 makeRotateYMatrix = MakeRotateYMatrix(viewProjection_.rotation_.y);
-		offset = TransformNormal(offset, makeRotateYMatrix);
+		Matrix4x4 rotateYMatrix = MakeRotateYMatrix(viewProjection_.rotation_.y);
+
+		offset = TransformNormal(offset, rotateYMatrix);
 
 		viewProjection_.translation_ = target_->translation_ + offset;
 	}

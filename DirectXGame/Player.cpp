@@ -1,15 +1,12 @@
 #include "Player.h"
 #include <cassert>
 
-void Player::Initialize(Model* modelBody, Model* modelHead, Model* modelL_arm, Model* modelR_arm) {
+void Player::Initialize(const std::vector<Model*>& models) {
 	// シングルトンインスタンスを取得する
 	input_ = Input::GetInstance();
 
-	//モデルの取得
-	modelBody_ = modelBody;
-	modelHead_ = modelHead;
-	modelL_arm_ = modelL_arm;
-	modelR_arm_ = modelR_arm;
+	// 基底クラスの初期化
+	BaseCharacter::Initialize(models);
 
 	// 親子関係
 	SetParent(&worldTransformBase_);
@@ -42,8 +39,8 @@ void Player::SetParent(const WorldTransform* parent) {
 }
 
 void Player::Update() {
-	// 行列を定数バッファに転送
-	worldTransformBase_.TransferMatrix();
+	BaseCharacter::Update();
+
 	// キャラクターの移動速さ
 	const float kCharacterSpeed = 0.3f;
 	XINPUT_STATE joystate;
@@ -111,10 +108,10 @@ void Player::UpdateFloatingGimmick() {
 	worldTransformR_arm_.rotation_.x = std::sin(floatingParameter_) * armAmplitude;
 }
 
-void Player::Draw(ViewProjection& viewProjection) {
+void Player::Draw(const ViewProjection& viewProjection) {
 	// 3Dモデルを描画
-	modelBody_->Draw(worldTransformBody_, viewProjection);
-	modelHead_->Draw(worldTransformHead_, viewProjection);
-	modelL_arm_->Draw(worldTransformL_arm_, viewProjection);
-	modelR_arm_->Draw(worldTransformR_arm_, viewProjection);
+	models_[kModelIndexBody_]->Draw(worldTransformBody_, viewProjection);
+	models_[kModelIndexHead_]->Draw(worldTransformHead_, viewProjection);
+	models_[kModelIndexL_arm_]->Draw(worldTransformL_arm_, viewProjection);
+	models_[kModelIndexR_arm_]->Draw(worldTransformR_arm_, viewProjection);
 }

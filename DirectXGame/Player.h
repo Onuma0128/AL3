@@ -1,22 +1,21 @@
 #pragma once
 #include "Input.h"
 #include "MT3.h"
-#include "Model.h"
 #include "ViewProjection.h"
-#include "WorldTransform.h"
+#include "BaseCharacter.h"
 #include "imgui.h"
 
 /// <summary>
 /// 自キャラ
 /// </summary>
-class Player {
+class Player : public BaseCharacter {
 public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="model">モデル</param>
 	/// <param name="textureHandle">テクスチャハンドル</param>
-	void Initialize(Model* modelBody, Model* modelHead, Model* modelL_arm, Model* modelR_arm);
+	void Initialize(const std::vector<Model*>& models) override;
 	// 浮遊ギミック初期化
 	void InitializeFloatingGimmick();
 	// 親子付け
@@ -29,7 +28,7 @@ public:
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	void Update() override;
 	// 浮遊ギミック更新
 	void UpdateFloatingGimmick();
 
@@ -37,7 +36,7 @@ public:
 	/// 描画
 	/// </summary>
 	/// <param name="viewProjection">ビュープロジェクション(参照渡し)</param>
-	void Draw(ViewProjection& viewProjection);
+	void Draw(const ViewProjection& viewProjection) override;
 
 private:
 	// キーボード入力
@@ -52,11 +51,11 @@ private:
 	WorldTransform worldTransformR_arm_;
 	float newRotetionY_;
 	float t_;
-	// モデル
-	Model* modelBody_ = nullptr;
-	Model* modelHead_ = nullptr;
-	Model* modelL_arm_ = nullptr;
-	Model* modelR_arm_ = nullptr;
+	// モデルの配列番号
+	uint32_t kModelIndexBody_ = 0;
+	uint32_t kModelIndexHead_ = 1;
+	uint32_t kModelIndexL_arm_ = 2;
+	uint32_t kModelIndexR_arm_ = 3;
 	// 浮遊ギミックの媒介変数
 	float floatingParameter_ = 0.0f;
 };

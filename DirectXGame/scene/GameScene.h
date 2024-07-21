@@ -8,6 +8,7 @@
 #include "Input.h"
 #include "Model.h"
 #include "Player.h"
+#include "Enemy.h"
 #include "Skydome.h"
 #include "Sprite.h"
 #include "ViewProjection.h"
@@ -64,6 +65,10 @@ private: // メンバ変数
 	std::unique_ptr<Model> modelFighterL_arm_ = nullptr;
 	std::unique_ptr<Model> modelFighterR_arm_ = nullptr;
 	std::unique_ptr<Player> player_ = nullptr;
+	// 敵キャラ
+	std::unique_ptr<Model> modelFighterEnemy_ = nullptr;
+	std::unique_ptr<Model> modelFighterEnemyGear_ = nullptr;
+	std::unique_ptr<Enemy> enemy_ = nullptr;
 	// 天球
 	std::unique_ptr<Model> skydomeModel_ = nullptr;
 	std::unique_ptr<Skydome> skydome_ = nullptr;
