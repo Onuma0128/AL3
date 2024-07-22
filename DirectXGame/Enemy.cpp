@@ -29,8 +29,8 @@ void Enemy::Update() {
 	BaseCharacter::Update();
 
 	worldTransformBase_.rotation_.y += 0.025f;
-	worldTransformL_Gear_.rotation_.y += 0.05f;
-	worldTransformR_Gear_.rotation_.y += 0.05f;
+	worldTransformL_Gear_.rotation_.y += 0.1f;
+	worldTransformR_Gear_.rotation_.y += 0.1f;
 
 	// キャラクターの移動速さ
 	const float kCharacterSpeed = 0.3f;
