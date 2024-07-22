@@ -19,6 +19,7 @@ void GameScene::Initialize() {
 	modelFighterBody_.reset(Model::CreateFromOBJ("Body", true));
 	modelFighterL_arm_.reset(Model::CreateFromOBJ("L_arm", true));
 	modelFighterR_arm_.reset(Model::CreateFromOBJ("R_arm", true));
+	modelFighterHammer_.reset(Model::CreateFromOBJ("Hammer", true));
 	modelFighterEnemy_.reset(Model::CreateFromOBJ("Enemy", true));
 	modelFighterEnemyGear_.reset(Model::CreateFromOBJ("EnemyGear", true));
 	// ビュープロジェクションの初期化
@@ -28,7 +29,8 @@ void GameScene::Initialize() {
 	// 自キャラの生成
 	player_ = std::make_unique<Player>();
 	std::vector<Model*> playerModels = {
-		modelFighterBody_.get(), modelFighterHead_.get(), modelFighterL_arm_.get(), modelFighterR_arm_.get()
+		modelFighterBody_.get(), modelFighterHead_.get(), 
+		modelFighterL_arm_.get(), modelFighterR_arm_.get(), modelFighterHammer_.get()
 	};
 	player_->Initialize(playerModels);
 	// 敵キャラの生成

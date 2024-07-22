@@ -4,6 +4,7 @@
 #include "ViewProjection.h"
 #include "BaseCharacter.h"
 #include "imgui.h"
+#include <optional>
 
 /// <summary>
 /// 自キャラ
@@ -16,6 +17,10 @@ public:
 	/// <param name="model">モデル</param>
 	/// <param name="textureHandle">テクスチャハンドル</param>
 	void Initialize(const std::vector<Model*>& models) override;
+	// 通常行動
+	void BehaviorRootInitialize();
+	// 攻撃行動
+	void BehaviorAttackInitialize();
 	// 浮遊ギミック初期化
 	void InitializeFloatingGimmick();
 	// 親子付け
@@ -29,6 +34,10 @@ public:
 	/// 更新
 	/// </summary>
 	void Update() override;
+	// 通常行動更新
+	void BehaviorRootUpdate();
+	// 攻撃行動更新
+	void BehaviorAttackUpdate();
 	// 浮遊ギミック更新
 	void UpdateFloatingGimmick();
 
@@ -49,6 +58,7 @@ private:
 	WorldTransform worldTransformHead_;
 	WorldTransform worldTransformL_arm_;
 	WorldTransform worldTransformR_arm_;
+	WorldTransform worldTransformHammer_;
 	float newRotetionY_;
 	float t_;
 	// モデルの配列番号
@@ -56,6 +66,16 @@ private:
 	uint32_t kModelIndexHead_ = 1;
 	uint32_t kModelIndexL_arm_ = 2;
 	uint32_t kModelIndexR_arm_ = 3;
+	uint32_t kModelIndexHammer_ = 4;
 	// 浮遊ギミックの媒介変数
 	float floatingParameter_ = 0.0f;
+	// プレイヤーの行動
+	enum class Behavior {
+		kRoot,
+		kAttack,
+	};
+	// プレイヤーの今の行動
+	Behavior behavior_ = Behavior::kRoot;
+	// 次の行動リクエスト
+	std::optional<Behavior> behaviorRequest_ = std::nullopt;
 };
