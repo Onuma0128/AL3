@@ -1,8 +1,8 @@
 #pragma once
+#include "BaseCharacter.h"
 #include "Input.h"
 #include "MT3.h"
 #include "ViewProjection.h"
-#include "BaseCharacter.h"
 #include "imgui.h"
 #include <optional>
 
@@ -21,6 +21,8 @@ public:
 	void BehaviorRootInitialize();
 	// 攻撃行動
 	void BehaviorAttackInitialize();
+	// ダッシュ
+	void BehaviorDashInitialize();
 	// 浮遊ギミック初期化
 	void InitializeFloatingGimmick();
 	// 親子付け
@@ -38,6 +40,8 @@ public:
 	void BehaviorRootUpdate();
 	// 攻撃行動更新
 	void BehaviorAttackUpdate();
+	// ダッシュ
+	void BehaviorDashUpdate();
 	// 浮遊ギミック更新
 	void UpdateFloatingGimmick();
 
@@ -59,7 +63,7 @@ private:
 	WorldTransform worldTransformL_arm_;
 	WorldTransform worldTransformR_arm_;
 	WorldTransform worldTransformHammer_;
-	float newRotetionY_;
+	float destinationAngleY;
 	float t_;
 	// モデルの配列番号
 	uint32_t kModelIndexBody_ = 0;
@@ -70,12 +74,14 @@ private:
 	// 浮遊ギミックの媒介変数
 	float floatingParameter_ = 0.0f;
 	// プレイヤーの行動
-	enum class Behavior {
-		kRoot,
-		kAttack,
-	};
+	enum class Behavior { kRoot, kAttack, kDash };
 	// プレイヤーの今の行動
 	Behavior behavior_ = Behavior::kRoot;
 	// 次の行動リクエスト
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
+	// ダッシュ用ワーク
+	struct WorkDash {
+		uint32_t dashParameter_ = 0;
+	};
+	WorkDash workDash_;
 };

@@ -19,6 +19,8 @@ float Length(const Vector3& v);
 Vector3 Normalize(const Vector3& v);
 // 座標変換
 Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix);
+// ラープ
+Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t);
 
 // 拡縮行列
 Matrix4x4 MakeScaleMatrix(const Vector3& scale);

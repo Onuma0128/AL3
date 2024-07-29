@@ -56,6 +56,11 @@ Vector3 Normalize(const Vector3& v) {
 	return result;
 }
 
+Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t) {
+	Vector3 result = (1.0f - t) * v1 + v2 * t;
+	return result;
+}
+
 Matrix4x4 Add(const Matrix4x4& m1, const Matrix4x4& m2) {
 	Matrix4x4 result{};
 	for (int i = 0; i < 4; i++) {

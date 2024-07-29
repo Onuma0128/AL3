@@ -24,22 +24,21 @@ void Player::Initialize(const std::vector<Model*>& models) {
 	worldTransformL_arm_.translation_ = {-1.0f, 1.0f, 0.0f};
 	worldTransformR_arm_.translation_ = {1.0f, 1.0f, 0.0f};
 	worldTransformHammer_.rotation_ = {pi, pi, 0.0f};
-	worldTransformHammer_.translation_ = {1.0f, 0.0f, 0.0f};
+	worldTransformHammer_.translation_ = {1.0f, -1.0f, 0.0f};
 
 	InitializeFloatingGimmick();
 }
 
-void Player::BehaviorRootInitialize() { 
-	InitializeFloatingGimmick();
+void Player::BehaviorRootInitialize() { InitializeFloatingGimmick(); }
+
+void Player::BehaviorAttackInitialize() { InitializeFloatingGimmick(); }
+
+void Player::BehaviorDashInitialize() {
+	workDash_.dashParameter_ = 0;
+	worldTransform_.rotation_.y = destinationAngleY;
 }
 
-void Player::BehaviorAttackInitialize() {
-	InitializeFloatingGimmick();
-}
-
-void Player::InitializeFloatingGimmick() {
-	floatingParameter_ = 0.0f;
-}
+void Player::InitializeFloatingGimmick() { floatingParameter_ = 0.0f; }
 
 void Player::SetParent(const WorldTransform* parent) {
 	// 親子関係を結ぶ
@@ -64,6 +63,9 @@ void Player::Update() {
 		case Behavior::kAttack:
 			BehaviorAttackInitialize();
 			break;
+		case Behavior::kDash:
+			BehaviorDashInitialize();
+			break;
 		}
 		behaviorRequest_ = std::nullopt;
 	}
@@ -74,6 +76,9 @@ void Player::Update() {
 		break;
 	case Behavior::kAttack:
 		BehaviorAttackUpdate();
+		break;
+	case Behavior::kDash:
+		BehaviorDashUpdate();
 		break;
 	}
 
@@ -109,13 +114,13 @@ void Player::BehaviorRootUpdate() {
 			// 移動処理
 			worldTransformBase_.translation_ = worldTransformBase_.translation_ + move;
 			// 自機の動きに合わせて回転
-			newRotetionY_ = std::atan2(move.x, move.z);
+			destinationAngleY = std::atan2(move.x, move.z);
 			// 補完時間の初期化
 			t_ = 0.3f;
 		}
 	}
 	// 最短角度補完
-	worldTransformBase_.rotation_.y = LerpShortAngle(worldTransformBase_.rotation_.y, newRotetionY_, t_);
+	worldTransformBase_.rotation_.y = LerpShortAngle(worldTransformBase_.rotation_.y, destinationAngleY, t_);
 
 	t_ += 0.1f;
 	if (t_ > 1.0f) {
@@ -125,6 +130,11 @@ void Player::BehaviorRootUpdate() {
 	// 攻撃処理に入る
 	if (joystate.Gamepad.wButtons & XINPUT_GAMEPAD_A) {
 		behaviorRequest_ = Behavior::kAttack;
+	}
+
+	// ダッシュ処理に入る
+	if (joystate.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER) {
+		behaviorRequest_ = Behavior::kDash;
 	}
 
 	UpdateFloatingGimmick();
@@ -156,6 +166,26 @@ void Player::BehaviorAttackUpdate() {
 		worldTransformR_arm_.rotation_.x = std::cos(floatingParameter_) * armAmplitude + pi * 1.4f;
 	}
 	if (floatingParameter_ > 2.3f * pi) {
+		behaviorRequest_ = Behavior::kRoot;
+	}
+}
+
+void Player::BehaviorDashUpdate() {
+	const float kAttackSpeed = 0.8f;
+	Vector3 move = {0.0f, 0.0f, 1.0f};
+	move = Normalize(move) * kAttackSpeed;
+	// カメラの動きに合わせて自機を回転
+	Matrix4x4 rotateMatrix = MakeRotateMatrix(worldTransformBase_.rotation_);
+	move = Transform(move, rotateMatrix);
+	// 移動処理
+	worldTransformBase_.translation_ = worldTransformBase_.translation_ + move;
+	// ダッシュの時間
+	const uint32_t behaviorDashTime = 30;
+
+	worldTransformL_arm_.rotation_.x = 0.5f;
+	worldTransformR_arm_.rotation_.x = 0.5f;
+
+	if (++workDash_.dashParameter_ >= behaviorDashTime) {
 		behaviorRequest_ = Behavior::kRoot;
 	}
 }
